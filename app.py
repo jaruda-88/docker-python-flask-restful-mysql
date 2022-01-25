@@ -6,11 +6,12 @@ app = Flask(__name__)
 
 app.secret_key = 'project1'
 
-app.config['MYSQL_HOST'] = '13.124.47.173'
+"""app.config['MYSQL_HOST'] = '13.124.47.173'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'admin'
 app.config['MYSQL_DB'] = 'project1'
-app.config['MYSQL_PORT'] = 3306
+app.config['MYSQL_PORT'] = 3306"""
+app.config.from_pyfile('config.py')
 
 # Intialize MySQL
 mysql = MySQL(app)
