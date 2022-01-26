@@ -1,32 +1,18 @@
 
 from flask import Flask, jsonify, request
-from flask_mysqldb import MySQL
+import db
 
 app = Flask(__name__)
 
-app.secret_key = 'project1'
-
-"""app.config['MYSQL_HOST'] = '13.124.47.173'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'admin'
-app.config['MYSQL_DB'] = 'project1'
-app.config['MYSQL_PORT'] = 3306"""
-app.config.from_pyfile('config.py')
-
-# Intialize MySQL
-mysql = MySQL(app)
-
+db_handler = db.DBHandler()
 
 @app.route('/', methods=['GET'])
 def vist():
     if request.method == "GET":
-        cur = mysql.connection.cursor()
-        sql = "SELECT *FROM users"
-        cur.execute(sql)
-        
-        data = cur.fetchall()
-        cur.close()
+        db_handler.Open()
+        data = db_handler.Execute('''SELECT * FROM users;''')
         print(data)
+        db_handler.Close()
         return jsonify({"dd":"dd"})
 
 if __name__ == '__main__':
