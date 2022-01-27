@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  back-end:
+    build:
+    dockerfile: Dockerfile
+    container_name: project1_back-end
+    networks:
+      - default
+      - project1_backend
+
+  mysql_db:
+    image: mysql
+    restart: always
+    container_name: project1_db
+    ports:
+      - "3306:3306"
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: project1
+    networks:
+      - default
+      - project1_backend
+
+
+networks:
+  project1_backend:
+    driver: bridge
