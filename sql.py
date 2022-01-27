@@ -1,4 +1,5 @@
 from functools import cache
+from tkinter.messagebox import NO
 import pymysql
 
 config = {
@@ -21,21 +22,32 @@ class DBHandler:
                                         charset='utf8'
                                     )
         except:
-            print("ddd")
+            print("db없음")
 
 
 
     def Open(self):
-        self.cursor = self.db.cursor()
+        try:
+            self.cursor = self.db.cursor()
+        except:
+            print("db없음")
 
 
     def Close(self):
-        self.cursor.close()
-        self.db.close()
+        try:
+            self.cursor.close()
+            self.db.close()
+        except:
+            print("db없음")
 
     
     def Execute(self, sql):
         try:
-            self.cursor.execute(sql)
-        finally:
-            return self.cursor.fetchall()
+            if self.cursor is not None:
+                self.cursor.execute(sql)
+                return self.cursor.fetchall()
+            else:
+                return None
+        except:
+            print("문법 또는 search 에러")
+            

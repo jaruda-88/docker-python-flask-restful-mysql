@@ -6,6 +6,10 @@ services:
     networks:
       - default
       - project1_backend
+    ports:
+      - "5040:5040"
+    container_name: project1_back
+
 
   mysql_db:
     image: mysql
@@ -13,9 +17,8 @@ services:
     container_name: project1_db
     ports:
       - "3306:3306"
-    volumes:
-      - ./db/data:/var/lib/mysql
-      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    #volumes:
+      #- ./db/data:/var/lib/mysql
     environment:
       TZ: Asia/Seoul
       MYSQL_ROOT_PASSWORD: admin
