@@ -2,9 +2,7 @@ version: '3'
 
 services:
   back-end:
-    build:
-    dockerfile: Dockerfile
-    container_name: project1_back-end
+    build: .
     networks:
       - default
       - project1_backend
@@ -15,6 +13,9 @@ services:
     container_name: project1_db
     ports:
       - "3306:3306"
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
     environment:
       TZ: Asia/Seoul
       MYSQL_ROOT_PASSWORD: admin

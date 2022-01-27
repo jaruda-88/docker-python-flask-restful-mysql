@@ -1,3 +1,4 @@
+from functools import cache
 import pymysql
 
 config = {
@@ -10,14 +11,18 @@ config = {
 
 class DBHandler:
     def __init__(self):
-        self.db = pymysql.connect(  
-                                    host=config['HOST'], 
-                                    port=config['PORT'], 
-                                    user=config['USER'], 
-                                    password=config['PASSWORD'], 
-                                    database=config['DB'], 
-                                    charset='utf8'
-                                )
+        try:
+            self.db = pymysql.connect(  
+                                        host=config['HOST'], 
+                                        port=config['PORT'], 
+                                        user=config['USER'], 
+                                        password=config['PASSWORD'], 
+                                        database=config['DB'], 
+                                        charset='utf8'
+                                    )
+        except:
+            print("ddd")
+
 
 
     def Open(self):
@@ -30,5 +35,7 @@ class DBHandler:
 
     
     def Execute(self, sql):
-        self.cursor.execute(sql)
-        return self.cursor.fetchall()
+        try:
+            self.cursor.execute(sql)
+        finally:
+            return self.cursor.fetchall()

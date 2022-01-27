@@ -1,10 +1,10 @@
 
 from flask import Flask, jsonify, request
-import db
+import sql
 
 app = Flask(__name__)
 
-db_handler = db.DBHandler()
+db_handler = sql.DBHandler()
 
 @app.route('/', methods=['GET'])
 def vist():
