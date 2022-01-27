@@ -2,6 +2,7 @@ from functools import cache
 from tkinter.messagebox import NO
 import pymysql
 
+
 config = {
     'HOST' : '13.124.47.173',
     'USER' : 'root',
@@ -9,6 +10,7 @@ config = {
     'DB' : 'project1',
     'PORT' : 3306,
 }
+
 
 class DBHandler:
     def __init__(self):
