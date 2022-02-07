@@ -7,29 +7,30 @@ services:
       dockerfile: Dockerfile-server
     networks:
       - default
-      - project1_backend
+      - net_backend
     ports:
       - "5040:5040"
-    container_name: project1_back
+    container_name: server
 
 
   mysql_db:
     image: mysql
     restart: always
-    container_name: project1_db
+    container_name: db
     ports:
       - "3306:3306"
-    #volumes:
+    volumes:
+      - ../project1_back-end/envs/:/docker-entrypoint-initdb.d
       #- ./db/data:/var/lib/mysql
-    environment:
-      TZ: Asia/Seoul
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: project1
+    #environment:
+      #TZ: Asia/Seoul
+      #MYSQL_ROOT_PASSWORD: admin
+      #MYSQL_DATABASE: project1    
     networks:
       - default
-      - project1_backend
+      - net_backend
 
 
 networks:
-  project1_backend:
+  net_backend:
     driver: bridge

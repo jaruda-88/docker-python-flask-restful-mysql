@@ -1,15 +1,10 @@
 from functools import cache
 from tkinter.messagebox import NO
 import pymysql
+from settings import DATABASES
 
 
-config = {
-    'HOST' : '13.124.47.173',
-    'USER' : 'root',
-    'PASSWORD' : 'admin',
-    'DB' : 'project1',
-    'PORT' : 3306,
-}
+config = DATABASES
 
 
 class DBHandler:
@@ -19,7 +14,7 @@ class DBHandler:
                                         host=config['HOST'], 
                                         port=config['PORT'], 
                                         user=config['USER'], 
-                                        password=config['PASSWORD'], 
+                                        password=config['PSW'], 
                                         database=config['DB'], 
                                         charset='utf8'
                                     )
