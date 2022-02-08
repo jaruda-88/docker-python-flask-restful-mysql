@@ -54,9 +54,9 @@ class DBHandler:
         except pymysql.err.ProgrammingError as PE:
             print(PE.args)
             return PE.args
-        # finally:
-        #     print("DB CLOSE")
-        #     self.db.close()
+        finally:
+             print("DB CLOSE")
+             self.db.close()
 
 
     def Open(self):

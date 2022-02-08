@@ -12,8 +12,10 @@ def vist():
         data = db_handler.session('''SELECT * FROM users;''')
         # db_handler.Open()
         # data = db_handler.Execute('''SELECT * FROM users;''')
+        print("------------------------------------------------------")
         print(data)
-        return jsonify({"dd":"dd"})
+        print("------------------------------------------------------")
+        return jsonify({"dd":data})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5040', debug=True)
