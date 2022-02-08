@@ -28,6 +28,7 @@ class DBHandler:
                     elif cursor.rowcount == 0:
                         return "empty db"
                     else:
+                        print("query execute", query)
                         cursor.execute(query)
                         return cursor.fetchall()
             except pymysql.err.IntegrityError as ITE:
