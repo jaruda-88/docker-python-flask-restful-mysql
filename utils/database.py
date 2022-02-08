@@ -1,3 +1,4 @@
+from cgi import print_directory
 from functools import cache
 from tkinter.messagebox import NO
 import pymysql
@@ -26,7 +27,10 @@ class DBHandler:
 
     def Open(self):
         try:
-            self.cursor = self.db.cursor()
+            if self.db.cursor is not None:
+                self.cursor = self.db.cursor()
+            else:
+                print("cursor None")
         except pymysql.err.IntegrityError as ITE:
             print(ITE.args)
         except pymysql.err.OperationalError as OE:
@@ -56,4 +60,6 @@ class DBHandler:
         except pymysql.err.ProgrammingError as PE:
             print(PE.args)
             return PE.args
+        finally:
+            self.Close()
             
