@@ -5,23 +5,19 @@ import pymysql
 from settings import DATABASE_CONFIG
 
 
-config = DATABASE_CONFIG
-
-
 class DBHandler:
     def __init__(self):
-        pass
+        self.config = DATABASE_CONFIG
     
 
     def connect(self):
-        self.db = pymysql.connect \
-        (  \
-            host=config['HOST'], \
-            port=config['PORT'], \
-            user=config['USER'], \
-            password=config['PASSWORD'], \
-            database=config['DB'], \
-            charset='utf8' \
+        self.db = pymysql.connect(  
+            host=self.config['HOST'], 
+            port=self.config['PORT'], 
+            user=self.config['USER'], 
+            password=self.config['PASSWORD'], 
+            database=self.config['DB'], 
+            charset='utf8' 
         )
 
 
