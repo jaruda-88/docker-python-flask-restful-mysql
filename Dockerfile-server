@@ -2,6 +2,7 @@ FROM python:3.9.5
 
 COPY requirements.txt .
 
+RUN pip3 install --upgrade pip
 RUN pip install -r requirements.txt
 
 WORKDIR /app
@@ -9,8 +10,6 @@ WORKDIR /app
 COPY . /app
 
 EXPOSE 5000
-
-RUN pip3 install --upgrade pip
 
 ENTRYPOINT ["python3"]
 
