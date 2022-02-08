@@ -10,9 +10,7 @@ class DBHandler:
         self.config = DATABASE_CONFIG
 
     def session(self, query):
-        
-        try:
-            db = pymysql.connect(  
+        db = pymysql.connect(  
                 host=self.config['HOST'], 
                 port=self.config['PORT'], 
                 user=self.config['USER'], 
@@ -20,6 +18,8 @@ class DBHandler:
                 database=self.config['DB'], 
                 charset='utf8' 
             )
+            
+        try:            
             with db.cursor() as cursor:
                 if cursor is None:
                     return "empty db"
