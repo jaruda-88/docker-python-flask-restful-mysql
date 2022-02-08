@@ -12,7 +12,6 @@ def vist():
         db_handler.Open()
         data = db_handler.Execute('''SELECT * FROM users;''')
         print(data)
-        db_handler.Close()
         return jsonify({"dd":"dd"})
 
 if __name__ == '__main__':

@@ -10,6 +10,8 @@ COPY . /app
 
 EXPOSE 5000
 
+RUN pip3 install --upgrade pip
+
 ENTRYPOINT ["python3"]
 
 CMD ["app.py"]
