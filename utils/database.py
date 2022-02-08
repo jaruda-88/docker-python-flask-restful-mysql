@@ -27,16 +27,15 @@ class DBHandler:
 
     def Open(self):
         try:
-            if self.db.cursor is not None:
-                self.cursor = self.db.cursor()
-            else:
-                print("cursor None")
+            self.cursor = self.db.cursor()
         except pymysql.err.IntegrityError as ITE:
             print(ITE.args)
         except pymysql.err.OperationalError as OE:
             print(OE.args)
         except pymysql.err.InternalError as IE:
             print(IE.args)
+        except:
+            print("cursor nones")
 
 
     def Close(self):
