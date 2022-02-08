@@ -8,24 +8,19 @@ from settings import DATABASE_CONFIG
 class DBHandler:
     def __init__(self):
         self.config = DATABASE_CONFIG
-    
-
-    def connect(self):
-        self.db = pymysql.connect(  
-            host=self.config['HOST'], 
-            port=self.config['PORT'], 
-            user=self.config['USER'], 
-            password=self.config['PASSWORD'], 
-            database=self.config['DB'], 
-            charset='utf8' 
-        )
-
 
     def session(self, query):
-        self.connect()
-
+        
         try:
-            with self.db.cursor() as cursor:
+            db = pymysql.connect(  
+                host=self.config['HOST'], 
+                port=self.config['PORT'], 
+                user=self.config['USER'], 
+                password=self.config['PASSWORD'], 
+                database=self.config['DB'], 
+                charset='utf8' 
+            )
+            with db.cursor() as cursor:
                 if cursor is None:
                     return "empty db"
                 elif cursor.rowcount == 0:
@@ -48,7 +43,7 @@ class DBHandler:
         except:
             return "empty db"
         finally:
-            self.db.close()
+            db.close()
 
 
     def Open(self):
