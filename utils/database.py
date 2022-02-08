@@ -32,30 +32,31 @@ class DBHandler:
                 #     print("query execute", query)
                 #     cursor.execute(query)
                 #     return cursor.fetchall()        
+
                 print("query execute", query)
                 cursor.execute(query)
                 return cursor.fetchall()      
         except pymysql.err.MySQLError as ME:
-            print(ME)
-            return ME
+            print(ME.args)
+            return ME.args
         except pymysql.err.DatabaseError as DE:
-            print(DE)
-            return DE
+            print(DE.args)
+            return DE.args
         except pymysql.err.OperationalError as OE:
-            print(OE)
-            return OE         
+            print(OE.args)
+            return OE.args         
         except pymysql.err.IntegrityError as ITE:
-            print(ITE)
-            return ITE
+            print(ITE.args)
+            return ITE.args
         except pymysql.err.InternalError as IE:
-            print(IE)
-            return IE
+            print(IE.args)
+            return IE.args
         except pymysql.err.ProgrammingError as PE:
-            print(PE)
-            return PE
-        finally:
-            print("DB CLOSE")
-            self.db.close()
+            print(PE.args)
+            return PE.args
+        # finally:
+        #     print("DB CLOSE")
+        #     self.db.close()
 
 
     def Open(self):
