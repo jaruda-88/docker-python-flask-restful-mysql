@@ -21,32 +21,37 @@ class DBHandler:
                     charset='utf8' 
                 )
                 
-            try:            
-                with self.db.cursor() as cursor:
-                    if cursor is None:
-                        return "empty db"
-                    elif cursor.rowcount == 0:
-                        return "empty db"
-                    else:
-                        print("query execute", query)
-                        cursor.execute(query)
-                        return cursor.fetchall()
-            except pymysql.err.IntegrityError as ITE:
-                return ITE.args
-            except pymysql.err.InternalError as IE:
-                return IE.args
-            except pymysql.err.ProgrammingError as PE:
-                return PE.args
-            except:
-                return "empty db"
-
+            with self.db.cursor() as cursor:
+                if cursor is None:
+                    print("empty db")
+                    return "empty db"
+                elif cursor.rowcount == 0:
+                    print("empty db")
+                    return "empty db"
+                else:
+                    print("query execute", query)
+                    cursor.execute(query)
+                    return cursor.fetchall()         
         except pymysql.err.MySQLError as ME:
+            print(ME.args)
             return ME.args
         except pymysql.err.DatabaseError as DE:
+            print(DE.args)
             return DE.args
         except pymysql.err.OperationalError as OE:
-            return OE.args           
+            print(OE.args)
+            return OE.args         
+        except pymysql.err.IntegrityError as ITE:
+            print(ITE.args)
+            return ITE.args
+        except pymysql.err.InternalError as IE:
+            print(IE.args)
+            return IE.args
+        except pymysql.err.ProgrammingError as PE:
+            print(PE.args)
+            return PE.args
         finally:
+            print("DB CLOSE")
             self.db.close()
 
 
