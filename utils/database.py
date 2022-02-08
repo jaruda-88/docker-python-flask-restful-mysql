@@ -27,21 +27,25 @@ class DBHandler:
 
     def Open(self):
         try:
-            self.cursor = self.db.cursor()
+            if self.db.cursor().rowcount == 0:
+                print("cursor none")
+            else:
+                self.cursor = self.db.cursor()
         except pymysql.err.IntegrityError as ITE:
             print(ITE.args)
         except pymysql.err.OperationalError as OE:
             print(OE.args)
         except pymysql.err.InternalError as IE:
             print(IE.args)
-        except:
-            print("cursor nones")
 
 
     def Close(self):
         try:
-            self.cursor.close()
-            self.db.close()
+            if self.cursor.rowcount == 0:
+                print("cursor none")
+            else:
+                self.cursor.close()
+                self.db.close()
         except pymysql.err.OperationalError as OE:
             print(OE.args)
         except pymysql.err.InternalError as IE:
@@ -50,7 +54,7 @@ class DBHandler:
     
     def Execute(self, query) -> tuple[str]:
         try:
-            if self.cursor is not None:
+            if self.cursor.rowcount != 0:
                 self.cursor.execute(query)
                 return self.cursor.fetchall()
         except pymysql.err.IntegrityError as ITE:
