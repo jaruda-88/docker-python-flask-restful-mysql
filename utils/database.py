@@ -9,41 +9,44 @@ class DBHandler:
     def __init__(self):
         self.config = DATABASE_CONFIG
 
+
     def session(self, query):
-        db = pymysql.connect(  
-                host=self.config['HOST'], 
-                port=self.config['PORT'], 
-                user=self.config['USER'], 
-                password=self.config['PASSWORD'], 
-                database=self.config['DB'], 
-                charset='utf8' 
-            )
-            
-        try:            
-            with db.cursor() as cursor:
-                if cursor is None:
-                    return "empty db"
-                elif cursor.rowcount == 0:
-                    return "empty db"
-                else:
-                    cursor.execute(query)
-                    return cursor.fetchall()
+        try:
+            self.db = pymysql.connect(  
+                    host=self.config['HOST'], 
+                    port=self.config['PORT'], 
+                    user=self.config['USER'], 
+                    password=self.config['PASSWORD'], 
+                    database=self.config['DB'], 
+                    charset='utf8' 
+                )
+                
+            try:            
+                with self.db.cursor() as cursor:
+                    if cursor is None:
+                        return "empty db"
+                    elif cursor.rowcount == 0:
+                        return "empty db"
+                    else:
+                        cursor.execute(query)
+                        return cursor.fetchall()
+            except pymysql.err.IntegrityError as ITE:
+                return ITE.args
+            except pymysql.err.InternalError as IE:
+                return IE.args
+            except pymysql.err.ProgrammingError as PE:
+                return PE.args
+            except:
+                return "empty db"
+
         except pymysql.err.MySQLError as ME:
             return ME.args
         except pymysql.err.DatabaseError as DE:
             return DE.args
         except pymysql.err.OperationalError as OE:
-            return OE.args
-        except pymysql.err.IntegrityError as ITE:
-            return ITE.args
-        except pymysql.err.InternalError as IE:
-            return IE.args
-        except pymysql.err.ProgrammingError as PE:
-            return PE.args
-        except:
-            return "empty db"
+            return OE.args           
         finally:
-            db.close()
+            self.db.close()
 
 
     def Open(self):

@@ -1,7 +1,7 @@
 #settings
 
 DATABASE_CONFIG = {
-    'HOST' : '13.124.47.173',
+    'HOST' : '3.38.135.214',
     'USER' : 'root',
     'PASSWORD' : 'admin',
     'DB' : 'project1',
