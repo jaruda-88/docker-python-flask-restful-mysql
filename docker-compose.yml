@@ -19,12 +19,15 @@ services:
     container_name: db
     ports:
       - "3306:3306"
-    #volumes:
+    env_file:
+      - ./envs/mysqlenv
+    volumes:
+      - ./envs/mysql-init-files/:/docker-entrypoint-initdb.d/
       #- ./db/data:/var/lib/mysql
-    environment:
-      TZ: Asia/Seoul
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: project1
+    #environment:
+      #TZ: Asia/Seoul
+      #MYSQL_ROOT_PASSWORD: admin
+      #MYSQL_DATABASE: project1
     networks:
       - default
       - net_backend
