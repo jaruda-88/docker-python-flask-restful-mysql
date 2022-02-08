@@ -3,7 +3,7 @@ version: '3'
 services:
   backend:
     build: 
-      context: ../project1_back-end/builds
+      context: .
       dockerfile: Dockerfile-server
     networks:
       - default
