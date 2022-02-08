@@ -5,24 +5,54 @@ import pymysql
 from settings import DATABASE_CONFIG
 
 
+config = DATABASE_CONFIG
+
+
 class DBHandler:
     def __init__(self):
+        pass
+    
+
+    def connect(self):
+        self.db = pymysql.connect \
+        (  \
+            host=config['HOST'], \
+            port=config['PORT'], \
+            user=config['USER'], \
+            password=config['PASSWORD'], \
+            database=config['DB'], \
+            charset='utf8' \
+        )
+
+
+    def session(self, query):
+        self.connect()
+
         try:
-            config = DATABASE_CONFIG
-            self.db = pymysql.connect(  
-                                        host=config['HOST'], 
-                                        port=config['PORT'], 
-                                        user=config['USER'], 
-                                        password=config['PASSWORD'], 
-                                        database=config['DB'], 
-                                        charset='utf8'
-                                    )
+            with self.db.cursor() as cursor:
+                if cursor is None:
+                    return "empty db"
+                elif cursor.rowcount == 0:
+                    return "empty db"
+                else:
+                    cursor.execute(query)
+                    return cursor.fetchall()
         except pymysql.err.MySQLError as ME:
-            print(ME.args)
+            return ME.args
         except pymysql.err.DatabaseError as DE:
-            print(DE.args)
+            return DE.args
         except pymysql.err.OperationalError as OE:
-            print(OE.args)
+            return OE.args
+        except pymysql.err.IntegrityError as ITE:
+            return ITE.args
+        except pymysql.err.InternalError as IE:
+            return IE.args
+        except pymysql.err.ProgrammingError as PE:
+            return PE.args
+        except:
+            return "empty db"
+        finally:
+            self.db.close()
 
 
     def Open(self):
