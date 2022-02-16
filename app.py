@@ -9,10 +9,7 @@ db_handler = utils.database.DBHandler()
 @app.route('/', methods=['GET'])
 def vist():
     if request.method == "GET":
-        data = db_handler.session('''SELECT * FROM users;''')
-        # db_handler.Open()
-        # data = db_handler.Execute('''SELECT * FROM users;''')
-        print(data)
+        data = db_handler.select('''SELECT * FROM users;''')
         return jsonify({"dd":data})
 
 if __name__ == '__main__':

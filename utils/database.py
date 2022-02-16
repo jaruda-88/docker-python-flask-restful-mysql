@@ -1,6 +1,3 @@
-from cgi import print_directory
-from functools import cache
-from tkinter.messagebox import NO
 import pymysql
 from settings import DATABASE_CONFIG
 
@@ -10,9 +7,9 @@ class DBHandler:
         self.config = DATABASE_CONFIG
 
 
-    def session(self, query):
+    def connection(self):
         try:
-            self.db = pymysql.connect(  
+            db = pymysql.connect(  
                     host=self.config['HOST'], 
                     port=self.config['PORT'], 
                     user=self.config['USER'], 
@@ -21,9 +18,97 @@ class DBHandler:
                     charset='utf8' 
                 )
                 
-            with self.db.cursor() as cursor:
-                cursor.execute(query)
-                return cursor.fetchall()      
+            return db 
+        except pymysql.err.MySQLError as ME:
+            return ME.args
+        except pymysql.err.DatabaseError as DE:
+            return DE.args
+        except pymysql.err.OperationalError as OE:
+            return OE.args         
+        except pymysql.err.IntegrityError as ITE:
+            return ITE.args
+        except pymysql.err.InternalError as IE:
+            return IE.args
+        except pymysql.err.ProgrammingError as PE:
+            return PE.args       
+
+
+    def select(self, query):
+        try:
+            with self.connection() as db:
+                db.cursor().execute(query)
+                result = db.cursor().fetchall()        
+        except pymysql.err.MySQLError as ME:
+            return ME.args
+        except pymysql.err.DatabaseError as DE:
+            return DE.args
+        except pymysql.err.OperationalError as OE:
+            return OE.args         
+        except pymysql.err.IntegrityError as ITE:
+            return ITE.args
+        except pymysql.err.InternalError as IE:
+            return IE.args
+        except pymysql.err.ProgrammingError as PE:
+            return PE.args   
+        finally:
+            db.cursor().close()    
+            return result
+
+
+    def insert(self, query):
+        try:
+            with self.connection() as db:
+                db.cursor().execute(query)
+                db.cursor().commit()
+        except pymysql.err.MySQLError as ME:
+            return ME.args
+        except pymysql.err.DatabaseError as DE:
+            return DE.args
+        except pymysql.err.OperationalError as OE:
+            return OE.args         
+        except pymysql.err.IntegrityError as ITE:
+            return ITE.args
+        except pymysql.err.InternalError as IE:
+            return IE.args
+        except pymysql.err.ProgrammingError as PE:
+            return PE.args   
+        finally:
+            db.cursor().close()    
+            return ('success')        
+
+    
+    def update(self, query):
+        try:
+            with self.connection() as db:
+                db.cursor().execute(query)
+                db.cursor().commit()
+        except pymysql.err.MySQLError as ME:
+            return ME.args
+        except pymysql.err.DatabaseError as DE:
+            return DE.args
+        except pymysql.err.OperationalError as OE:
+            return OE.args         
+        except pymysql.err.IntegrityError as ITE:
+            return ITE.args
+        except pymysql.err.InternalError as IE:
+            return IE.args
+        except pymysql.err.ProgrammingError as PE:
+            return PE.args   
+        finally:
+            db.cursor().close()    
+            return ('success')       
+
+
+    def session(self, query):
+        try:
+            db = pymysql.connect(  
+                host=self.config['HOST'], 
+                port=self.config['PORT'], 
+                user=self.config['USER'], 
+                password=self.config['PASSWORD'], 
+                database=self.config['DB'], 
+                charset='utf8' 
+            )
         except pymysql.err.MySQLError as ME:
             return ME.args
         except pymysql.err.DatabaseError as DE:
@@ -37,4 +122,4 @@ class DBHandler:
         except pymysql.err.ProgrammingError as PE:
             return PE.args
         finally:
-             self.db.close()            
+             return db          
