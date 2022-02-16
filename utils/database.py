@@ -44,17 +44,17 @@ class DBHandler:
                     cursor.execute(query)
                     result = cursor.fetchall()        
             except pymysql.err.MySQLError as ME:
-                return ME.args
+                result = ME.args
             except pymysql.err.DatabaseError as DE:
-                return DE.args
+                result = DE.args
             except pymysql.err.OperationalError as OE:
-                return OE.args         
+                result = OE.args         
             except pymysql.err.IntegrityError as ITE:
-                return ITE.args
+                result = ITE.args
             except pymysql.err.InternalError as IE:
-                return IE.args
+                result = IE.args
             except pymysql.err.ProgrammingError as PE:
-                return PE.args   
+                result = PE.args   
             finally:
                 db.cursor().close()    
                 return result
