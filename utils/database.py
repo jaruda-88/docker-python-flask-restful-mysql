@@ -34,30 +34,26 @@ class DBHandler:
 
 
     def select(self, query):
-        db = self.connection()
-
-        if type(db) is tuple:
-            return db
-        else:
-            try:
-                with db.cursor() as cursor:
-                    cursor.execute(query)
-                    result = cursor.fetchall()        
-            except pymysql.err.MySQLError as ME:
-                result = ME.args
-            except pymysql.err.DatabaseError as DE:
-                result = DE.args
-            except pymysql.err.OperationalError as OE:
-                result = OE.args         
-            except pymysql.err.IntegrityError as ITE:
-                result = ITE.args
-            except pymysql.err.InternalError as IE:
-                result = IE.args
-            except pymysql.err.ProgrammingError as PE:
-                result = PE.args   
-            finally:
-                db.cursor().close()    
-                return result
+        try:
+            db = self.connection()
+            with db.cursor() as cursor:
+                cursor.execute(query)
+                result = cursor.fetchall()        
+        except pymysql.err.MySQLError as ME:
+            result = ME.args
+        except pymysql.err.DatabaseError as DE:
+            result = DE.args
+        except pymysql.err.OperationalError as OE:
+            result = OE.args         
+        except pymysql.err.IntegrityError as ITE:
+            result = ITE.args
+        except pymysql.err.InternalError as IE:
+            result = IE.args
+        except pymysql.err.ProgrammingError as PE:
+            result = PE.args   
+        finally:
+            db.cursor().close()    
+            return result
 
 
     # def insert(self, query):
