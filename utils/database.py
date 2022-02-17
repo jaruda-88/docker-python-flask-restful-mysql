@@ -1,16 +1,14 @@
-from math import fabs
 import pymysql
 from settings import DATABASE_CONFIG
 
-
 class DBHandler:
     def __init__(self):
-        """ db config 설정 """
+        """ mysql database controler """
         self.config = DATABASE_CONFIG
 
 
     def connector(self):
-        """ db 접속 """
+        """ db connector """
         try:
             db = pymysql.connect(  
                     host=self.config['HOST'], 
@@ -28,7 +26,7 @@ class DBHandler:
 
 
     def executer(self, query):
-        """ query 실행 """
+        """ db connect and query execute """
         is_connected, conn = self.connector()
 
         if is_connected:

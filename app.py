@@ -1,10 +1,10 @@
-
 from flask import Flask
 from api import blueprint
 
 app = Flask(__name__)
 app.register_blueprint(blueprint)
 
+#import utils.database
 #db_handler = utils.database.DBHandler()
 
 # @app.route('/', methods=['GET'])
