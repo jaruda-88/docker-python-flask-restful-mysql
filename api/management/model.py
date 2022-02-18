@@ -1,4 +1,4 @@
-from api import management_ns
+from api.management import management_ns
 from flask_restx import fields
 
 
