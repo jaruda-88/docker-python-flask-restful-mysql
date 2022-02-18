@@ -1,4 +1,4 @@
-from api.management.model import management_ns
+from api import management_ns
 from flask_restx import Resource
 
 

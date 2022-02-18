@@ -1,7 +1,5 @@
-from flask_restx import Namespace, fields
-
-
-management_ns = Namespace("management", description="api")
+from api import management_ns
+from flask_restx import fields
 
 
 test = management_ns.model(
