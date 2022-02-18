@@ -1,7 +1,7 @@
 import imp
 from flask import Blueprint
 from flask_restx import Api
-from api.management.restx import api as management_ns
+from api.management import api as management_ns
 
 blueprint = Blueprint("api", __name__, url_prefix="/api")
 

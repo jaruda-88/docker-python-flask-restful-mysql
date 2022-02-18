@@ -1,8 +1,9 @@
+from api.management import api as ns
 from flask_restx import Resource, Namespace
 
-api = Namespace("management", description="api")
+#api = Namespace("management", description="api")
 
-@api.route("/")
+@ns.route("/")
 class TestResource(Resource):
     def get(self):
         """ ddddd """
