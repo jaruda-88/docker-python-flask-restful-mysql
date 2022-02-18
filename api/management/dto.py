@@ -1,13 +1,16 @@
-import api
+# api 모델
+
+
 from flask_restx import fields, Namespace
 
 
 class ManagementDto:
-    api = Namespace("management", description="api")
+    api = Namespace("management", description="sample api")
 
-    test = api.model(
-        "test",
+
+    SampleResponse = api.model(
+        "SampleResponse",
         {
-            "ddd" : fields.String(description="dddd")
+            "sample" : fields.String(description="sample")
         }
     )
