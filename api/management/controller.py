@@ -1,12 +1,12 @@
-from flask_restx import Resource, Namespace
-from .dto import test
+from flask_restx import Resource
+from .dto import ManagementDto
 
-api = Namespace("management", description="api")
+api = ManagementDto.api
 
 
 @api.route("/")
 class TestResource(Resource):
-    @api.marshal_with(test)
+    @api.marshal_with(ManagementDto.test)
     def get(self):
         """ get test """
         return "test"

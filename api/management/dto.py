@@ -1,11 +1,13 @@
-import imp
-from .controller import api as ns
-from flask_restx import fields
+import api
+from flask_restx import fields, Namespace
 
 
-test = ns.model(
-    "test",
-    {
-        "ddd" : fields.String(description="dddd")
-    }
-)
+class ManagementDto:
+    api = Namespace("management", description="api")
+
+    test = ns.model(
+        "test",
+        {
+            "ddd" : fields.String(description="dddd")
+        }
+    )
