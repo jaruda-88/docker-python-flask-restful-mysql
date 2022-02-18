@@ -1,6 +1,7 @@
-from api.management.controller import api as ns
-
+import imp
+from .controller import api as ns
 from flask_restx import fields
+
 
 test = ns.model(
     "test",
