@@ -1,5 +1,6 @@
-from api import api
-from flask_restx import Resource
+from flask_restx import Resource, Namespace
+
+api = Namespace("management", description="api")
 
 @api.route("/")
 class TestResource(Resource):
