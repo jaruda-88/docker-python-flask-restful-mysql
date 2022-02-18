@@ -3,10 +3,11 @@
 
 from flask_restx import Resource
 from .dto import ManagementDto
-from utils.database import DBHandler
+import utils.database
+
 
 api = ManagementDto.api
-db = DBHandler()
+db = utils.database.DBHandler()
 
 
 @api.route("/sample1")
