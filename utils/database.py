@@ -1,6 +1,7 @@
 import pymysql
 from settings import DATABASE_CONFIG
 
+
 class DBHandler:
     def __init__(self):
         """ mysql database controler """
