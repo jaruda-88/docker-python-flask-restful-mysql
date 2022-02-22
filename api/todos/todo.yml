@@ -1,0 +1,22 @@
+summary: test post
+consumes:
+    - application/json
+parameters:
+    - in: body
+      name: Request
+      description: test
+      schema:
+        $ref: '#/todo'
+responses:
+    200:
+        description: OK
+tags:
+    - todo
+definitions:
+    todo:
+        type: object
+        required:
+            - test   
+        properties:
+            test:
+                type: string
