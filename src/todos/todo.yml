@@ -6,7 +6,7 @@ parameters:
       name: Request
       description: test
       schema:
-        $ref: '#/todo'
+        $ref: '#/definitions/todo'
 responses:
     200:
         description: OK
