@@ -9,6 +9,3 @@ MarkupSafe==2.0.1
 pytz==2021.1
 six==1.16.0
 Werkzeug==2.0.1
-pymysql==0.7.9
-flasgger==0.9.5
-requests==2.25.1

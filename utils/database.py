@@ -5,18 +5,18 @@ from settings import DATABASE_CONFIG
 class DBHandler:
     def __init__(self):
         """ mysql database controler """
-        self.config = DATABASE_CONFIG
+        print('mysql database controler')
 
 
     def connector(self):
         """ db connector """
         try:
             db = pymysql.connect(  
-                    host=self.config['HOST'], 
-                    port=self.config['PORT'], 
-                    user=self.config['USER'], 
-                    password=self.config['PASSWORD'], 
-                    database=self.config['DB'], 
+                    host=DATABASE_CONFIG['HOST'], 
+                    port=DATABASE_CONFIG['PORT'], 
+                    user=DATABASE_CONFIG['USER'], 
+                    password=DATABASE_CONFIG['PASSWORD'], 
+                    database=DATABASE_CONFIG['DB'], 
                     charset='utf8' 
                 )
             return True, db 
@@ -28,11 +28,11 @@ class DBHandler:
 
     def executer(self, query):
         """ db connect and query execute """
-        is_connected, conn = self.connector()
+        is_connected, db = self.connector()
 
         if is_connected:
             try:
-                with conn.cursor() as cursor:
+                with db.cursor() as cursor:
                     cursor.execute(query)
 
                     if 'select' or 'SELECT' in query:
@@ -42,11 +42,11 @@ class DBHandler:
                         cursor.commit()
 
                     cursor.close()
-                conn.close()
+                db.close()
 
                 return True, result
 
             except pymysql.err.MySQLError as ME:
                 return False, ME.args
         else:
-            return is_connected, conn    
+            return is_connected, db    
