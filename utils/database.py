@@ -26,25 +26,40 @@ class DBHandler:
             return False, OE.args
 
 
-    def executer(self, query):
-        """ db connect and query execute """
+    def query(self, query):
+        """ db connect query """
         is_connected, db = self.connector()
 
         if is_connected:
             try:
                 with db.cursor() as cursor:
                     cursor.execute(query)
-
-                    if 'select' or 'SELECT' in query:
-                        result = cursor.fetchall()    
-                    else:
-                        result = ()
-                        cursor.commit()
+                    result = cursor.fetchall()
 
                     cursor.close()
                 db.close()
 
                 return True, result
+            except pymysql.err.MySQLError as ME:
+                return False, ME.args
+        else:
+            return is_connected, db
+
+
+    def executer(self, query):
+        """ db connect execute """
+        is_connected, db = self.connector()
+
+        if is_connected:
+            try:
+                with db.cursor() as cursor:
+                    cursor.execute(query)
+                    cursor.commit()
+
+                    cursor.close()
+                db.close()
+
+                return True, ('success')
 
             except pymysql.err.MySQLError as ME:
                 return False, ME.args

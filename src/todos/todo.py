@@ -14,5 +14,5 @@ import sys"""
 class Todo(Resource):
     @swag_from('todo.yml', validation=True)
     def post(self):
-        _flag, data = db.executer('''SELECT * FROM tb_task;''')
+        _flag, data = db.query('''SELECT * FROM tb_task;''')
         return jsonify({"dd":data})
