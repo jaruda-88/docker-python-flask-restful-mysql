@@ -1,6 +1,6 @@
 use project1;
 
-CREATE TABLE tb_task (
+CREATE TABLE tb_todo (
     id INT AUTO_INCREMENT,
     todo VARCHAR(255) NOT NULL,
     PRIMARY KEY(id)

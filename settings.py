@@ -1,7 +1,10 @@
 #settings
 
+BUILD = "local"
+
+
 DATABASE_CONFIG = {
-    'HOST' : '3.38.135.214',
+    'HOST' : '3.38.135.214' if BUILD == "server" else "192.168.1.69",
     'USER' : 'root',
     'PASSWORD' : 'password',
     'DB' : 'project1',

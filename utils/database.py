@@ -32,7 +32,7 @@ class DBHandler:
 
         if is_connected:
             try:
-                with db.cursor() as cursor:
+                with db.cursor(pymysql.cursors.DictCursor) as cursor:
                     cursor.execute(query)
                     result = cursor.fetchall()
 
