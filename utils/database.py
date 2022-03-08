@@ -7,7 +7,7 @@ class DBHandler:
         """ mysql database controler """
         print('mysql database controler')
 
-
+    
     def connector(self):
         """ db connector """
         try:
@@ -46,15 +46,15 @@ class DBHandler:
             return is_connected, db
 
 
-    def executer(self, query):
+    def executer(self, query, value):
         """ db connect execute """
         is_connected, db = self.connector()
 
         if is_connected:
             try:
-                with db.cursor() as cursor:
-                    cursor.execute(query)
-                    cursor.commit()
+                with db.cursor(pymysql.cursors.DictCursor) as cursor:
+                    cursor.execute(query, value)
+                    db.commit()
 
                     cursor.close()
                 db.close()

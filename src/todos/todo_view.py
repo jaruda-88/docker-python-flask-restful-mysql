@@ -2,12 +2,44 @@
 
 
 todo_post = {
-
+    "summary": "POST todo",
+    "consumes": "application/json",
+    "parameters": [
+        {
+            "name": "ReqSend",
+            "in": "body",
+            "description": "register todo",
+            "schema": {
+                "$ref": "#/definitions/task"
+            }
+        }
+    ],
+    "responses": {
+        "200": {
+            "description": "OK"
+        }
+    },
+    "tags":[
+        "todo"
+    ],
+    "definitions":{
+        "task": {
+            "type": "object",
+            "required": [
+                "task"
+            ],
+            "properties": {
+                "task": {
+                    "type": "string",
+                }
+            }
+        }
+    }
 }
 
 
 todo_get = {
-    "summary": "Get todo list",
+    "summary": "GET todo list",
     "consumes": "applicatin/json",
     "parameters": [
         {
