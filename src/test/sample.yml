@@ -1,0 +1,41 @@
+summary: test post
+consumes:
+    - application/json
+responses:
+    200:
+        description: OK
+        schema:
+            $ref: '#/definitions/sample_ok' 
+    400:
+        description: Bad Request
+    500:
+        description: Error    
+        schema:
+            $ref: '#/definitions/sample_fail'       
+tags:
+    - sample
+definitions:
+    sample_ok:
+        type: object
+        required:
+            - resultCode
+            - resultMsg 
+        properties:
+            resultCode:
+                type: string
+            resultMsg:
+                properties:
+                    id:
+                        type: integer
+                    todo:
+                        type: string
+    sample_fail:
+        type: object
+        required:
+            - resultCode
+            - resultMsg 
+        properties:
+            resultCode:
+                type: string
+            resultMsg:
+                type: string
