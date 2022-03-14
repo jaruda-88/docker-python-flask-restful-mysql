@@ -1,7 +1,7 @@
 #settings
 
 # 0 : server, 1 : local
-BUILD = 1
+BUILD = 0
 # AWS EC2
 SERVER_HOST = '3.38.135.214'
 # your local
