@@ -1,11 +1,10 @@
 import pymysql
-from settings import DATABASE_CONFIG
+from utils.settings import DATABASE_CONFIG
 
 
 class DBHandler:
     def __init__(self):
         """ mysql database controler """
-        print('mysql database controler')
 
     
     def connector(self):

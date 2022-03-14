@@ -10,7 +10,6 @@ db = database.DBHandler()
 class Todo(Resource):
     @swag_from(todo_post, validation=True)
     def post(self):
-
         try:
             rj = f_request.get_json()
 
@@ -34,8 +33,6 @@ class Todo(Resource):
 
     @swag_from(todo_get)
     def get(self):
-        #result = { "resultCode" : "", "resultMsg" : "" }
-
         try:
             pk = f_request.args.get('todo_id')
 
@@ -55,10 +52,6 @@ class Todo(Resource):
                 raise Exception(f"{result[0]} : {result[1]}")            
             
             return jsonify(result)
-            #result["resultCode"] = HTTPStatus.OK
-            #result["resultMsg"] = data
 
         except Exception as ex:
-            #result["resultCode"] = HTTPStatus.INTERNAL_SERVER_ERROR
-            #result["resultMsg"] = ex.args[0]
             return jsonify(ex.args[0])

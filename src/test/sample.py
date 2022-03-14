@@ -9,7 +9,6 @@ db = database.DBHandler()
 class sample(Resource):
     @swag_from('sample.yml')
     def get(self):
-        
         try:
             query = '''SELECT * FROM tb_todo;'''
 

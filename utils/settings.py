@@ -1,10 +1,15 @@
 #settings
 
-BUILD = "local"
+# 0 : server, 1 : local
+BUILD = 1
+# AWS EC2
+SERVER_HOST = '3.38.135.214'
+# your local
+LOCAL_HOST = '192.168.1.69'
 
 
 DATABASE_CONFIG = {
-    'HOST' : '3.38.135.214' if BUILD == "server" else "192.168.1.69",
+    'HOST' : SERVER_HOST if BUILD == 0 else LOCAL_HOST,
     'USER' : 'root',
     'PASSWORD' : 'password',
     'DB' : 'project1',

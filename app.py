@@ -1,6 +1,4 @@
 from flask import Flask
-from flasgger import Swagger
-from settings import SWAGGER_CONFIG, SWAGGER_TEMPLATE
 
 
 def register_blueprints(app):
@@ -9,12 +7,19 @@ def register_blueprints(app):
     app.register_blueprint(blueprint, url_prefix="/api")
 
 
+def create_swagger(app):
+    from flasgger import Swagger
+    from utils.settings import SWAGGER_CONFIG, SWAGGER_TEMPLATE
+
+    Swagger(app, config=SWAGGER_CONFIG, template=SWAGGER_TEMPLATE)
+
+
 def create_app():
     app = Flask(__name__)
 
     register_blueprints(app)    
 
-    Swagger(app, config=SWAGGER_CONFIG, template=SWAGGER_TEMPLATE)
+    create_swagger(app)
 
     return app
 
