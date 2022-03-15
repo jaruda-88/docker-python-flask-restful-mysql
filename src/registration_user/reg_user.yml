@@ -1,0 +1,45 @@
+summary: registration user
+consumes:
+    - application/json
+parameters:
+    - in: body
+      name: Request
+      description: user info
+      schema:
+          $ref: '#/definitions/userinfo'
+responses:
+    200:
+        description: OK
+        schema:
+            $ref: '#/definitions/registration'
+    400:
+        description: Bad Request
+    500:
+        description: Error
+        schema:
+            $ref: '#/definitions/registration'
+tags:
+    - registration_user
+definitions:
+    registration:
+        type: object
+        required:
+             - resultCode
+             - resultMsg
+        properties:
+            resultCode:
+                type: string
+            resultMsg:
+                type: string
+    userinfo:
+        type: object
+        required:
+            - userid
+            - pw
+        properties:
+            userid:
+                type: string
+            pw:
+                type: string
+            username:
+                type: string

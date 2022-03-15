@@ -8,6 +8,7 @@ RUN pip install -r requirements.txt
 RUN pip install PyMySQL
 RUN pip install flasgger
 RUN pip install cryptography
+RUN pip install flask_cors
 
 WORKDIR /app
 

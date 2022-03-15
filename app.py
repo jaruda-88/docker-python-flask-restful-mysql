@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 
 
 def register_blueprints(app):
@@ -16,6 +17,8 @@ def create_swagger(app):
 
 def create_app():
     app = Flask(__name__)
+
+    CORS(app)
 
     register_blueprints(app)    
 
