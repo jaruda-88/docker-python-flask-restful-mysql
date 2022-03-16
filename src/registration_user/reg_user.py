@@ -4,6 +4,7 @@ from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
+import hashlib
 
 
 db = database.DBHandler()
@@ -25,10 +26,18 @@ class RegistrationUser(Resource):
             if pw == "":
                 raise Exception('password is empty')
 
-            _flag, tb_user = db.query( '''SELECT * FROM tb_user;''' )
+            # INSERT INTO project1.tb_user (userid, username, pw, create_at) SELECT 'test','test','test',SYSDATE() FROM DUAL WHERE NOT EXISTS (SELECT * FROM tb_user WHERE userid='test');
+            _flag, tb_user = db.query( '''INSERT INTO tb_user (user)''' )
 
-            if _flag == False:
-                raise Exception(f"{result[0]} : {result[1]}")            
+            # if _flag == False:
+            #     raise Exception(f"{result[0]} : {result[1]}")            
+
+            # list_of_userid = [ str(user['userid']) for user in tb_user ] 
+
+            # if userid in list_of_userid:
+            #     raise Exception('userid already registered')
+
+            pw_hash = hashlib.sha256(pw.encode('utf-8')).hexdigest()
 
             return ""
 
