@@ -12,14 +12,8 @@ responses:
         description: OK
         schema:
             $ref: '#/definitions/registration'
-    400:
-        description: Bad Request
-    500:
-        description: Error
-        schema:
-            $ref: '#/definitions/registration'
 tags:
-    - registration_user
+    - user
 definitions:
     registration:
         type: object

@@ -3,7 +3,7 @@ from flask_restful import Api
 
 from src.todos.todo import Todo
 from src.test.sample import sample
-from src.registration_user.reg_user import RegistrationUser
+from src.users.user import User
 
 blueprint = Blueprint("api", __name__)
 
@@ -11,4 +11,4 @@ api = Api(blueprint)
 
 api.add_resource(Todo, '/todo')
 api.add_resource(sample, '/sample')
-api.add_resource(RegistrationUser, '/registration_user')
+api.add_resource(User, '/user')

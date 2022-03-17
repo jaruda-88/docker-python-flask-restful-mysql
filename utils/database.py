@@ -50,15 +50,16 @@ class DBHandler:
         is_connected, db = self.connector()
 
         if is_connected:
+            result = -1
             try:
                 with db.cursor(pymysql.cursors.DictCursor) as cursor:
-                    cursor.execute(query, value)
+                    result = cursor.execute(query, value)
                     db.commit()
 
                     cursor.close()
                 db.close()
 
-                return True, ('success')
+                return True, result
 
             except pymysql.err.MySQLError as ME:
                 return False, ME.args
