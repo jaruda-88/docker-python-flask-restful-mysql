@@ -46,6 +46,20 @@ SWAGGER_TEMPLATE = {
             "name": "project source",
             "url": "https://github.com/jaruda-88/project1_back-end"
         }
+    },
+    "components": {
+        "schemas": {
+            "DefaultResponse": {
+                "properties": {
+                    "resultCode": {
+                        "type": "integer"
+                    },
+                    "resultMsg": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
     }
     # "securityDefinitions": {
     #     "Kakao": {

@@ -1,0 +1,31 @@
+summary: login user
+consumes:
+    - application/json
+parameters:
+    - in: body
+      name: Request
+      description: login
+      schema:
+          $ref: '#/definitions/LoginUserInfo'
+responses:
+    200:
+        description: OK
+        schema:
+            $ref: '#/components/schemas/DefaultResponse'
+    500:
+        description: Errors
+        schema:
+            $ref: '#/components/schemas/DefaultResponse'
+tags:
+    - user
+definitions:
+    LoginUserInfo:
+        type: object
+        required:
+            - userid
+            - pw
+        properties:
+            userid:
+                type: string
+            pw:
+                type: string

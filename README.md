@@ -14,6 +14,7 @@ api : RestFul
 ```
 swagger : flasgger
 mysql : pymysql
+token : pyjwt
 ```
 
 ## 빌드
