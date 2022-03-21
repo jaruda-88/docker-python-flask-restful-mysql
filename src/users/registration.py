@@ -16,6 +16,8 @@ class Registration(Resource):
         resp = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             rj = f_request.get_json()
+            # auth = f_request.headers['Authorization']
+            # auth = f_request.headers.get('Authorization')
 
             if rj is None:
                 resp['resultCode'] = HTTPStatus.NO_CONTENT

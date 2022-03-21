@@ -25,14 +25,17 @@ class DBHandler:
             return False, OE.args
 
 
-    def query(self, query):
+    def query(self, query, value = ''):
         """ db connect query """
         is_connected, db = self.connector()
 
         if is_connected:
             try:
                 with db.cursor(pymysql.cursors.DictCursor) as cursor:
-                    cursor.execute(query)
+                    if value == '':
+                        cursor.execute(query)
+                    else:
+                        cursor.execute(query, value)
                     result = cursor.fetchall()
 
                     cursor.close()
@@ -45,15 +48,18 @@ class DBHandler:
             return is_connected, db
 
 
-    def executer(self, query, value):
+    def executer(self, query, value = ''):
         """ db connect execute """
         is_connected, db = self.connector()
 
         if is_connected:
             result = -1
             try:
-                with db.cursor(pymysql.cursors.DictCursor) as cursor:
-                    result = cursor.execute(query, value)
+                with db.cursor(pymysql.cursors.DictCursor) as cursor:                    
+                    if value == '':
+                        result = cursor.execute(query)
+                    else:
+                        result = cursor.execute(query, value)
                     db.commit()
 
                     cursor.close()

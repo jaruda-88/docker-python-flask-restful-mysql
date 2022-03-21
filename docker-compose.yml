@@ -2,6 +2,7 @@ version: '3'
 
 services:
   backend:
+    restart: always
     build: 
       context: .  # path
       dockerfile: Dockerfile-server # flask build
