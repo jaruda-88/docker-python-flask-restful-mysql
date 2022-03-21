@@ -23,6 +23,14 @@ class Login(Resource):
                 resp['resultCode'] = HTTPStatus.NO_CONTENT
                 raise Exception("request data is empty")
 
+            if rj['userid'] is None:
+                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception("Not found userid")
+
+            if rj['pw'] is None:
+                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception("Not found pw")
+
             userid = rj['userid']
             pw = rj['pw']
 
