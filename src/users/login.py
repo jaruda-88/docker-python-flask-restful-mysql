@@ -4,8 +4,7 @@ from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
 import hashlib
-import jwt
-from utils.function import get_add_hour_to_dt_now
+from utils.function import get_add_hour_to_dt_now, encode_token
 
 
 db = database.DBHandler()
@@ -59,10 +58,11 @@ class Login(Resource):
                 'id': result[0]['id'],
                 'userid': result[0]['userid'],
                 'username': result[0]['username'],
-                'exp': get_add_hour_to_dt_now(value=1)
+                'exp': get_add_hour_to_dt_now(value=1,tz='Asia/Seoul')
             }
 
-            token = jwt.encode(payload, 'project1', algorithm='HS256')
+            token = encode_token(payload)
+
             resp['resultMsg'] = token
         except Exception as ex:
             resp['resultMsg'] = ex.args[0]
