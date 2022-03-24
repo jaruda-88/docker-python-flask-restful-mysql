@@ -3,8 +3,7 @@ from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
-import hashlib
-from utils.function import get_add_hour_to_dt_now, encode_token
+from utils.function import get_add_hour_to_dt_now, encode_token, get_password_sha256_hash
 
 
 db = database.DBHandler()
@@ -42,7 +41,7 @@ class Login(Resource):
                 raise Exception("password is empty")
 
             # db 검색을 위해 비밀번호 암호화
-            pw_hash = hashlib.sha256(pw.encode('utf-8')).hexdigest()
+            pw_hash = get_password_sha256_hash(pw)
 
             _flag, result = db.query('''SELECT * FROM tb_user WHERE userid=%s AND pw=%s;''', (userid, pw_hash))
 

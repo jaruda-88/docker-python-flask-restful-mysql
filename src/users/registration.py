@@ -2,9 +2,8 @@ from http import HTTPStatus
 from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
-from utils.function import get_dt_now_to_str
+from utils.function import get_dt_now_to_str, get_password_sha256_hash
 import utils.database as database
-import hashlib
 
 
 db = database.DBHandler()
@@ -21,6 +20,18 @@ class Registration(Resource):
                 resp['resultCode'] = HTTPStatus.NO_CONTENT
                 raise Exception("request data is empty")
 
+            if rj['userid'] is None:
+                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception("Not found userid")
+
+            if rj['username'] is None:
+                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception("Not found username")
+
+            if rj['pw'] is None:
+                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception("Not found pw")
+
             userid = rj['userid']
             usernm = rj['username']
             pw = rj['pw']
@@ -34,7 +45,7 @@ class Registration(Resource):
                 raise Exception('password is empty')
 
             # 비밀번호 암호화
-            pw_hash = hashlib.sha256(pw.encode('utf-8')).hexdigest()
+            pw_hash = get_password_sha256_hash(pw)
 
             # 쿼리, 유니크 설정하지않고 userid 중복 체크
             _flag, result = db.executer('''INSERT INTO tb_user (userid, username, pw, create_at) 

@@ -52,26 +52,23 @@ SWAGGER_TEMPLATE = {
             "DefaultResponse": {
                 "properties": {
                     "resultCode": {
+                        "description": "httpstatus code number",
                         "type": "integer"
                     },
                     "resultMsg": {
+                        "description": "response contents",
                         "type": "string"
                     }
                 }
             }
+        },
+        "parameters": {
+            "TokenParam": {
+                "description": "Authorization header using JWT token",  
+                "type": "token",
+                "name": "Authorization",
+                "in": "header"
+            }
         }
     }
-    # "securityDefinitions": {
-    #     "Kakao": {
-    #         "type": "apiKey",
-    #         "name": "Authorization",
-    #         "in": "header",
-    #         "description": "Authorization header using JWT token"
-    #     }
-    # },
-    # "security": [
-    #     {
-    #         "JWT": [ ]
-    #     }
-    # ]
 }

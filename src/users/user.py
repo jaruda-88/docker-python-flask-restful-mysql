@@ -1,13 +1,10 @@
 from http import HTTPStatus
-from math import fabs
 from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
-import hashlib
-import datetime
 from src.users.user_views import user_get
-from utils.function import decode_token, get_dt_now, get_add_hour_to_dt_now, get_add_second_to_dt_now
+from utils.function import decode_token
 
 
 db = database.DBHandler()
