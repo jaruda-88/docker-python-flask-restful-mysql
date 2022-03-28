@@ -1,15 +1,14 @@
 #settings
 
-# 0 : server, 1 : local
-BUILD = 0
-# AWS EC2
-SERVER_HOST = '3.38.135.214'
-# your local
-LOCAL_HOST = '192.168.1.69'
+
+BUILD = { 
+    'type' : 'server',
+    'host' : { "server" : '3.38.135.214', 'local' : '192.168.1.69', 'develop' : 'localhost' }
+ }
 
 
 DATABASE_CONFIG = {
-    'HOST' : SERVER_HOST if BUILD == 0 else LOCAL_HOST,
+    'HOST' : BUILD['host'].get(BUILD['type'], 'None'),
     'USER' : 'root',
     'PASSWORD' : 'password',
     'DB' : 'project1',
