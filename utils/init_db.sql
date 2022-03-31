@@ -1,12 +1,12 @@
 use project1;
 
-CREATE TABLE tb_todo (
+CREATE TABLE IF NOT EXISTS tb_todo(
     id INT AUTO_INCREMENT,
     todo VARCHAR(255) NOT NULL,
     PRIMARY KEY(id)
 )ENGINE=INNODB;
 
-CREATE TABLE tb_user (
+CREATE TABLE IF NOT EXISTS tb_user(
     id INT AUTO_INCREMENT,
     userid VARCHAR(30) NOT NULL,
     username VARCHAR(30),

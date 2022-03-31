@@ -22,8 +22,8 @@ services:
       - "3306:3306"
     #env_file:
     #  - ./envs/mysqlenv # mysql environment set
-    volumes:
-      - ./envs/mysql-init-files/:/docker-entrypoint-initdb.d/ # mysql init
+    #volumes:
+      #- ./envs/mysql-init-files/:/docker-entrypoint-initdb.d/ # mysql init
       #- ./db/data:/var/lib/mysql # save to host mysql data 
     environment:
       - TZ=Asia/Seoul

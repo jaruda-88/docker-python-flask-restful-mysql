@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_cors import CORS
 
 
 def register_blueprints(app):
@@ -15,10 +14,60 @@ def create_swagger(app):
     Swagger(app, config=SWAGGER_CONFIG, template=SWAGGER_TEMPLATE)
 
 
+def init_db():
+    import os
+    import utils.database as database
+
+    db = database.DBHandler()
+
+    root = os.path.dirname(__file__)
+    path = os.path.join(root, 'utils/init_db.sql')
+
+    data = open(path, 'r').readlines()
+    stmts = []
+    DELIMITER = ';'
+    stmt = ''
+
+    for lineno, line in enumerate(data):
+        if not line.strip():
+            continue
+
+        if line.startswith('--'):
+            continue
+
+        if 'DELIMITER' in line:
+            DELIMITER = line.split()[1]
+            continue
+
+        if (DELIMITER not in line):
+            stmt += line.replace(DELIMITER, ';')
+            continue
+
+        if stmt:
+            stmt += line
+            stmts.append(stmt.strip())
+            stmt = ''
+        else:
+            stmts.append(line.strip())
+     
+    _flag, conn = db.connector()
+    if _flag:
+        with conn.cursor() as cursor:
+            for stmt in stmts:
+                cursor.execute(stmt)
+            conn.commit()
+            cursor.close()
+        conn.close()
+
+
 def create_app():
+    from flask_cors import CORS
+
     app = Flask(__name__)
 
     CORS(app)
+
+    init_db()
 
     register_blueprints(app)    
 
