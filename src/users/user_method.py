@@ -10,6 +10,12 @@ user_get = {
             "schema": {
                 "$ref":"#/components/schemas/DefaultResponse"
             }
+        },
+        "500": {
+            "description":"ERROS",
+            "schema": {
+                "$ref":"#/components/schemas/DefaultResponse"
+            }
         }
     },
     "tags": [

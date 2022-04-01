@@ -12,24 +12,24 @@ db = database.DBHandler()
 class Registration(Resource):
     @swag_from('registration.yml', validation=True)
     def post(self):
-        resp = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
+        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             rj = f_request.get_json()
 
             if rj is None:
-                resp['resultCode'] = HTTPStatus.NO_CONTENT
+                response['resultCode'] = HTTPStatus.NO_CONTENT
                 raise Exception("request data is empty")
 
             if rj['userid'] is None:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("Not found userid")
 
             if rj['username'] is None:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("Not found username")
 
             if rj['pw'] is None:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("Not found pw")
 
             userid = rj['userid']
@@ -37,11 +37,11 @@ class Registration(Resource):
             pw = rj['pw']
 
             if userid == "":
-                resp["resultCode"] = HTTPStatus.NO_CONTENT
+                response["resultCode"] = HTTPStatus.NO_CONTENT
                 raise Exception('userid is empty')
             
             if pw == "":
-                resp["resultCode"] = HTTPStatus.NO_CONTENT
+                response["resultCode"] = HTTPStatus.NO_CONTENT
                 raise Exception('password is empty')
 
             # 비밀번호 암호화
@@ -56,22 +56,22 @@ class Registration(Resource):
 
             # db 쿼리 실패
             if _flag == False:
-                resp["resultCode"] = HTTPStatus.NOT_FOUND
+                response["resultCode"] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{result[0]} : {result[1]}")
             
             # insert 성공 시 1
             # insert 실패 시 0
             if type(result) is int and bool(result) == False: 
-                resp["resultCode"] = HTTPStatus.FORBIDDEN
+                response["resultCode"] = HTTPStatus.FORBIDDEN
                 raise Exception('userid already registered')
             
             # 회원등록 성공
-            resp["resultMsg"] = 'success'
+            response["resultMsg"] = 'success'
                 
         except Exception as ex:
-            resp["resultMsg"] = ex.args[0]
+            response["resultMsg"] = ex.args[0]
 
-        if resp["resultCode"] == HTTPStatus.OK:
-            return jsonify(resp)
+        if response["resultCode"] == HTTPStatus.OK:
+            return jsonify(response)
         else:
-            return resp, HTTPStatus.INTERNAL_SERVER_ERROR
+            return response, HTTPStatus.INTERNAL_SERVER_ERROR

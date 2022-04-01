@@ -3,8 +3,8 @@ from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
-from src.users.user_views import user_get
-from utils.function import decode_token
+from src.users.user_method import user_get
+from utils.function import check_token
 
 
 db = database.DBHandler()
@@ -13,36 +13,30 @@ db = database.DBHandler()
 class User(Resource):
     @swag_from(user_get)
     def get(self):
-        resp = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
+        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
-            auth = f_request.headers.get('Authorization')
+            code, payload = check_token(f_request.headers)
 
-            if auth is None:
-                resp['resultCode'] = HTTPStatus.NON_AUTHORITATIVE_INFORMATION
-                raise Exception("None token")
+            if code != HTTPStatus.OK:
+                response['resultCode'] = code
+                raise Exception(payload)
 
-            payload = decode_token(auth)
-
-            if payload is None:
-                resp['resultCode'] = HTTPStatus.NOT_ACCEPTABLE
-                raise Exception("Token Expiration")
-
-            _flag, result = db.query('''SELECT create_at, id, userid, username FROM tb_user WHERE userid=%s''', payload['userid'])
+            _flag, result = db.query('''SELECT create_at, id, userid, username FROM tb_user WHERE activate=1 AND userid=%s''', payload['userid'])
 
             if _flag == False:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{result[0]} : {result[1]}")
 
             if _flag and result is None or len(result) <= 0:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("not user data")
 
-            resp["resultMsg"] = result[0]
+            response["resultMsg"] = result[0]
                 
         except Exception as ex:
-            resp["resultMsg"] = ex.args[0]
+            response["resultMsg"] = ex.args[0]
 
-        if resp["resultCode"] == HTTPStatus.OK:
-            return jsonify(resp)
+        if response["resultCode"] == HTTPStatus.OK:
+            return jsonify(response)
         else:
-            return resp, HTTPStatus.INTERNAL_SERVER_ERROR
+            return response, HTTPStatus.INTERNAL_SERVER_ERROR

@@ -2,6 +2,7 @@ import datetime
 from pytz import timezone
 import jwt
 import hashlib
+from http import HTTPStatus
 
 
 def get_dt_now(tz):
@@ -37,3 +38,21 @@ def decode_token(token):
     # token 유효시간 만료 에러
     except jwt.ExpiredSignatureError:
         return None
+
+
+def check_token(headers):
+    ''' jwt 복호화 후 token의 payload return '''
+    try:
+        auth = headers.get('Authorization')
+
+        if auth is None:
+            return HTTPStatus.NON_AUTHORITATIVE_INFORMATION, "None token"
+
+        payload = decode_token(auth)
+
+        if payload is None:
+            return HTTPStatus.NOT_ACCEPTABLE, "Token Expiration"
+
+        return HTTPStatus.OK, payload
+    except Exception as ex:
+        return HTTPStatus.INTERNAL_SERVER_ERROR, ex.args[0]

@@ -12,32 +12,32 @@ db = database.DBHandler()
 class Login(Resource):
     @swag_from('login.yml', validation=True)
     def post(self):
-        resp = { 'resultCode': HTTPStatus.OK, 'resultMsg': '' }   
+        response = { 'resultCode': HTTPStatus.OK, 'resultMsg': '' }   
 
         try:
             rj = f_request.get_json()
 
             if rj is None:
-                resp['resultCode'] = HTTPStatus.NO_CONTENT
+                response['resultCode'] = HTTPStatus.NO_CONTENT
                 raise Exception("request data is empty")
 
             if rj['userid'] is None:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("Not found userid")
 
             if rj['pw'] is None:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("Not found pw")
 
             userid = rj['userid']
             pw = rj['pw']
 
             if userid == "":
-                resp['resultCode'] = HTTPStatus.NO_CONTENT
+                response['resultCode'] = HTTPStatus.NO_CONTENT
                 raise Exception("userid is empty")
 
             if pw == "":
-                resp['resultCode'] = HTTPStatus.NO_CONTENT
+                response['resultCode'] = HTTPStatus.NO_CONTENT
                 raise Exception("password is empty")
 
             # db 검색을 위해 비밀번호 암호화
@@ -46,11 +46,11 @@ class Login(Resource):
             _flag, result = db.query('''SELECT * FROM tb_user WHERE userid=%s AND pw=%s;''', (userid, pw_hash))
 
             if _flag == False:
-                resp['resultCode'] = HTTPStatus.NOT_FOUND
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{result[0]} : {result[1]}")
 
             if _flag and result is None or len(result) <= 0:
-                resp['resultCode'] = HTTPStatus.FORBIDDEN
+                response['resultCode'] = HTTPStatus.FORBIDDEN
                 raise Exception("userid or password does not match")
 
             payload = {
@@ -62,11 +62,11 @@ class Login(Resource):
 
             token = encode_token(payload)
 
-            resp['resultMsg'] = token
+            response['resultMsg'] = token
         except Exception as ex:
-            resp['resultMsg'] = ex.args[0]
+            response['resultMsg'] = ex.args[0]
 
-        if resp['resultCode'] == HTTPStatus.OK:
-            return jsonify(resp)
+        if response['resultCode'] == HTTPStatus.OK:
+            return jsonify(response)
         else:
-            return resp, HTTPStatus.INTERNAL_SERVER_ERROR
+            return response, HTTPStatus.INTERNAL_SERVER_ERROR
