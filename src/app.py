@@ -16,11 +16,12 @@ def create_swagger(app):
 
 def init_db():
     import os
+    from pathlib import Path
     import utils.database as database
 
     db = database.DBHandler()
 
-    root = os.path.dirname(__file__)
+    root = Path(os.path.dirname(os.path.abspath(__file__))).parent
     path = os.path.join(root, 'utils/init_db.sql')
 
     data = open(path, 'r').readlines()

@@ -11,7 +11,7 @@ board_post = {
             "in": "body",
             "description": "register board content",
             "schema": {
-                "$ref": "#/definitions/writingInfo"
+                "$ref": "#/definitions/WritingInfo"
             }
         }
     ],
@@ -33,7 +33,7 @@ board_post = {
         "board"
     ],
     "definitions": {
-        "writingInfo": {
+        "WritingInfo": {
             "type": "object",
             "required": [
                 "writer", "content"

@@ -27,5 +27,5 @@ class sample(Resource):
                     "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, 
                     "resultMsg" : ex.args[0]
                 }
-
+                
         return jsonify(result)
