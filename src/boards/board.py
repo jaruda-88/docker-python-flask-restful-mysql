@@ -3,7 +3,7 @@ from flask import jsonify, request as f_request
 from flask_restful import Resource
 from flasgger import Swagger, swag_from
 import utils.database as database
-from src.boards.board_method import board_post, board_get
+from src.boards.board_method import board_post, board_get, board_delete
 from utils.function import get_dt_now_to_str, check_token
 
 
@@ -85,6 +85,47 @@ class Board(Resource):
                 raise Exception(f"{result[0]} : {result[1]}")            
 
             response['resultMsg'] = result
+        except Exception as ex:
+            response['resultMsg'] = ex.args[0]
+
+        if response['resultCode'] == HTTPStatus.OK:
+            return jsonify(response)
+        else:
+            return response, HTTPStatus.INTERNAL_SERVER_ERROR
+
+    
+    @swag_from(board_delete)
+    def delete(self):
+        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
+        try:
+            code, payload = check_token(f_request.headers)
+
+            if code != HTTPStatus.OK:
+                response['resultCode'] = code
+                raise Exception(payload)
+
+            pk = f_request.args.get('board_id')
+
+            if pk is None:
+                response['resultCode'] = HTTPStatus.NO_CONTENT
+                raise Exception("board_id is None")
+
+            sql = f'''DELETE FROM tb_board WHERE id={int(pk)}'''
+
+            _flag, result = db.executer(sql)
+
+            if _flag == False:
+                response['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception(f'{result[0]} : {result[1]}')
+            
+            # insert 성공 시 1
+            # insert 실패 시 0
+            if _flag and bool(result) == False:
+                response['resultCode'] = HTTPStatus.FORBIDDEN
+                raise Exception('Not found')
+
+            response['resultMsg'] = 'Ok'
+
         except Exception as ex:
             response['resultMsg'] = ex.args[0]
 

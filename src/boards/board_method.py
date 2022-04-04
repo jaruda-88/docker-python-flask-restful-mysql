@@ -101,3 +101,34 @@ board_get = {
         }
     }
 }
+
+board_delete = {
+    "summary": "DELETE board row",
+    "consumes": "application/json",
+    "parameters": [
+        { "$ref": "#/components/parameters/TokenParam" },
+        {
+            "name": "board_id",
+            "in": "query",
+            "description": "pk",
+            "type": "integer"
+        }
+    ],
+    "tags": [
+        "board"
+    ],
+    "responses": {
+        "200": {
+            "description": "OK",
+            "schema": {
+                "$ref": "#/definitions/BoardResponse"
+            }
+        },
+        "500": {
+            "description": "Errors",
+            "schema": {
+                "$ref": "#/definitions/BoardResponse"
+            }
+        }
+    }
+}

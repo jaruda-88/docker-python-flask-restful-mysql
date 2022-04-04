@@ -2,7 +2,7 @@
 
 
 BUILD = { 
-    'type' : 'server',
+    'type' : 'local',
     'host' : { "server" : '3.38.135.214', 'local' : '192.168.1.69', 'develop' : 'localhost' }
  }
 
