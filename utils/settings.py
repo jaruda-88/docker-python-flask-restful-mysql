@@ -2,15 +2,17 @@
 
 
 BUILD = { 
-    'type' : 'local',
-    'host' : { "server" : '3.38.135.214', 'local' : '192.168.1.69', 'develop' : 'localhost' }
+    'type' : 'server',
+    'db_host' : { "server" : 'mydatabase.cvc2dcwg4ut0.ap-northeast-2.rds.amazonaws.com', 'local' : '3.38.135.214', 'develop' : 'localhost' },
+    'db_user' : { "server" : 'jaruda', 'local' : 'root', 'develop' : 'root' },
+    'db_pw' : { "server" : 'Jkk100458', 'local' : 'password', 'develop' : 'password' }
  }
 
 
 DATABASE_CONFIG = {
-    'HOST' : BUILD['host'].get(BUILD['type'], 'None'),
-    'USER' : 'root',
-    'PASSWORD' : 'password',
+    'HOST' : BUILD['db_host'].get(BUILD['type'], 'None'),
+    'USER' : BUILD['db_user'].get(BUILD['type'], 'None'),
+    'PASSWORD' : BUILD['db_pw'].get(BUILD['type'], 'None'),
     'DB' : 'project1',
     'PORT' : 3306,
 }

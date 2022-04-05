@@ -63,12 +63,14 @@ def init_db():
 
 def create_app():
     from flask_cors import CORS
+    from utils.settings import BUILD
 
     app = Flask(__name__)
 
     CORS(app)
 
-    init_db()
+    if BUILD['type'] != 'server':
+        init_db()
 
     register_blueprints(app)    
 
