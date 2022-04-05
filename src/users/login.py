@@ -44,7 +44,7 @@ class Login(Resource):
             pw_hash = get_password_sha256_hash(pw)
 
             # 쿼리 작성
-            sql = '''SELECT * FROM tb_user WHERE userid=%s AND pw=%s;'''
+            sql = '''SELECT userid, pw FROM tb_user WHERE userid=%s AND pw=%s;'''
             _flag, result = db.query(sql, (userid, pw_hash))
 
             if _flag == False:
