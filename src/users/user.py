@@ -13,15 +13,19 @@ db = database.DBHandler()
 class User(Resource):
     @swag_from(user_get)
     def get(self):
+        """ user pk로 유저 검색 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             code, payload = check_token(f_request.headers)
 
+            # 토큰 복호화 실패
             if code != HTTPStatus.OK:
                 response['resultCode'] = code
                 raise Exception(payload)
 
-            _flag, result = db.query('''SELECT create_at, id, userid, username FROM tb_user WHERE activate=1 AND userid=%s''', payload['userid'])
+            # 쿼리 작성
+            sql = '''SELECT create_at, id, userid, username FROM tb_user WHERE activate=1 AND userid=%s;'''
+            _flag, result = db.query(sql, payload['userid'])
 
             if _flag == False:
                 response['resultCode'] = HTTPStatus.NOT_FOUND

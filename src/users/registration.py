@@ -12,7 +12,8 @@ db = database.DBHandler()
 class Registration(Resource):
     @swag_from('registration.yml', validation=True)
     def post(self):
-        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
+        """ 회원가입 """
+        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : 'Ok' }
         try:
             rj = f_request.get_json()
 
@@ -47,7 +48,7 @@ class Registration(Resource):
             # 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
 
-            # 쿼리, 유니크 설정하지않고 userid 중복 체크
+            # 쿼리 작성, 유니크 설정하지않고 userid 중복 체크
             _flag, result = db.executer('''INSERT INTO tb_user (userid, username, pw, create_at) 
             SELECT %s,%s,%s,%s 
             FROM 
@@ -65,9 +66,6 @@ class Registration(Resource):
                 response["resultCode"] = HTTPStatus.FORBIDDEN
                 raise Exception('userid already registered')
             
-            # 회원등록 성공
-            response["resultMsg"] = 'success'
-                
         except Exception as ex:
             response["resultMsg"] = ex.args[0]
 

@@ -1,4 +1,4 @@
-summary: registration user
+summary: POST registration user
 consumes:
     - application/json
 parameters:

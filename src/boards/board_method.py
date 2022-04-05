@@ -52,7 +52,7 @@ board_post = {
 
 
 board_get = {
-    "summary": "get board list",
+    "summary": "GET board list",
     "consumes": "application/json",
     "parameters": [
         { "$ref" : "#/components/parameters/TokenParam" }

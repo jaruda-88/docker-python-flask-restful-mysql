@@ -12,6 +12,7 @@ db = database.DBHandler()
 class Login(Resource):
     @swag_from('login.yml', validation=True)
     def post(self):
+        """ 로그인 """
         response = { 'resultCode': HTTPStatus.OK, 'resultMsg': '' }   
 
         try:
@@ -43,7 +44,9 @@ class Login(Resource):
             # db 검색을 위해 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
 
-            _flag, result = db.query('''SELECT * FROM tb_user WHERE userid=%s AND pw=%s;''', (userid, pw_hash))
+            # 쿼리 작성
+            sql = '''SELECT * FROM tb_user WHERE userid=%s AND pw=%s;'''
+            _flag, result = db.query(sql, (userid, pw_hash))
 
             if _flag == False:
                 response['resultCode'] = HTTPStatus.NOT_FOUND
@@ -53,6 +56,7 @@ class Login(Resource):
                 response['resultCode'] = HTTPStatus.FORBIDDEN
                 raise Exception("userid or password does not match")
 
+            # 토큰 설정
             payload = {
                 'id': result[0]['id'],
                 'userid': result[0]['userid'],
@@ -60,6 +64,7 @@ class Login(Resource):
                 'exp': get_add_hour_to_dt_now(value=1,tz='Asia/Seoul')
             }
 
+            # 토큰 생성
             token = encode_token(payload)
 
             response['resultMsg'] = token

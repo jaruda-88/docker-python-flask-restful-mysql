@@ -13,6 +13,7 @@ db = database.DBHandler()
 class Board(Resource):
     @swag_from(board_post)
     def post(self):
+        """ 게시물 작성 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             code, payload = check_token(f_request.headers)
@@ -71,6 +72,7 @@ class Board(Resource):
 
     @swag_from(board_get)
     def get(self):
+        """ 게시판 검색 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             code, payload = check_token(f_request.headers)
@@ -96,10 +98,12 @@ class Board(Resource):
     
     @swag_from(board_delete)
     def delete(self):
-        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
+        """ 게시물 삭제 """
+        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : 'Ok' }
         try:
             code, payload = check_token(f_request.headers)
 
+            # 토큰 복호화 실패
             if code != HTTPStatus.OK:
                 response['resultCode'] = code
                 raise Exception(payload)
@@ -111,7 +115,6 @@ class Board(Resource):
                 raise Exception("board_id is None")
 
             sql = f'''DELETE FROM tb_board WHERE id={int(pk)}'''
-
             _flag, result = db.executer(sql)
 
             if _flag == False:
@@ -123,8 +126,6 @@ class Board(Resource):
             if _flag and bool(result) == False:
                 response['resultCode'] = HTTPStatus.FORBIDDEN
                 raise Exception('Not found')
-
-            response['resultMsg'] = 'Ok'
 
         except Exception as ex:
             response['resultMsg'] = ex.args[0]
