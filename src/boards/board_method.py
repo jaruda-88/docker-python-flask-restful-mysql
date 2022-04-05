@@ -121,13 +121,13 @@ board_delete = {
         "200": {
             "description": "OK",
             "schema": {
-                "$ref": "#/definitions/BoardResponse"
+                "$ref": "#/components/schemas/DefaultResponse"
             }
         },
         "500": {
             "description": "Errors",
             "schema": {
-                "$ref": "#/definitions/BoardResponse"
+                "$ref": "#/components/schemas/DefaultResponse"
             }
         }
     }
