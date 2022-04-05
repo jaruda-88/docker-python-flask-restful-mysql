@@ -12,7 +12,6 @@ db = database.DBHandler()
 class Login(Resource):
     @swag_from('login.yml', validation=True)
     def post(self):
-        """ 로그인 """
         response = { 'resultCode': HTTPStatus.OK, 'resultMsg': '' }   
 
         try:

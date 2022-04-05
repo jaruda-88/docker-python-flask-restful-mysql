@@ -13,11 +13,11 @@ db = database.DBHandler()
 class Board(Resource):
     @swag_from(board_post)
     def post(self):
-        """ 게시물 작성 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             code, payload = check_token(f_request.headers)
 
+            # 토큰 복호화 실패
             if code != HTTPStatus.OK:
                 response['resultCode'] = code
                 raise Exception(payload)
@@ -51,6 +51,7 @@ class Board(Resource):
                 response["resultCode"] = HTTPStatus.INTERNAL_SERVER_ERROR
                 raise Exception("does not match writer(userid)")
 
+            # 쿼리 작성
             sql = '''INSERT INTO tb_board (writer, content, create_at, update_at) VALUES(%s, %s, %s, %s)'''
             dt = get_dt_now_to_str()
             _flag, result = db.executer(sql, (writer, content, dt, dt))
@@ -72,11 +73,11 @@ class Board(Resource):
 
     @swag_from(board_get)
     def get(self):
-        """ 게시판 검색 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             code, payload = check_token(f_request.headers)
 
+            # 토큰 복호화 실패
             if code != HTTPStatus.OK:
                 response['resultCode'] = code
                 raise Exception(payload)
@@ -98,7 +99,6 @@ class Board(Resource):
     
     @swag_from(board_delete)
     def delete(self):
-        """ 게시물 삭제 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : 'Ok' }
         try:
             code, payload = check_token(f_request.headers)

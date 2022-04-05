@@ -13,7 +13,6 @@ db = database.DBHandler()
 class User(Resource):
     @swag_from(user_get)
     def get(self):
-        """ user pk로 유저 검색 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
         try:
             code, payload = check_token(f_request.headers)

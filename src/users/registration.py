@@ -12,7 +12,6 @@ db = database.DBHandler()
 class Registration(Resource):
     @swag_from('registration.yml', validation=True)
     def post(self):
-        """ 회원가입 """
         response = { "resultCode" : HTTPStatus.OK, "resultMsg" : 'Ok' }
         try:
             rj = f_request.get_json()
