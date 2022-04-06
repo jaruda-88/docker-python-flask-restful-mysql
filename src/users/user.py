@@ -82,12 +82,14 @@ class User(Resource):
             # 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
 
+            dt = get_dt_now_to_str()
+
             # 쿼리 작성, 유니크 설정하지않고 userid 중복 체크
-            _flag, result = db.executer('''INSERT INTO tb_user (userid, username, pw, create_at) 
+            _flag, result = db.executer('''INSERT INTO tb_user (userid, username, pw, create_at, update_at) 
             SELECT %s,%s,%s,%s 
             FROM 
             DUAL WHERE NOT EXISTS(SELECT * FROM tb_user WHERE userid=%s);''', 
-            (userid, usernm, pw_hash, get_dt_now_to_str(), userid))
+            (userid, usernm, pw_hash, dt, dt, userid))
 
             # db 쿼리 실패
             if _flag == False:
