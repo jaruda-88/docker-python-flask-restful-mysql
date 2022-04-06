@@ -12,7 +12,7 @@ user_get = {
             }
         },
         "500": {
-            "description":"ERROS",
+            "description":"Errors",
             "schema": {
                 "$ref":"#/components/schemas/DefaultResponse"
             }
@@ -21,4 +21,56 @@ user_get = {
     "tags": [
         "user"
     ]
+}
+
+
+user_post = {
+    "summary": "POST registration user",
+    "consumes": "application/json",
+    "parameters": [
+        {
+            "name": "registration request",
+            "in": "body",
+            "description": "user info",
+            "schema": {
+                "$ref": "#/definitions/UserRegistrationInfo"
+            }
+        }
+    ],
+    "responses": {
+        "200": {
+            "description":"OK",
+            "schema": {
+                "$ref":"#/components/schemas/DefaultResponse"
+            }
+        },
+        "500": {
+            "description":"Errors",
+            "schema": {
+                "$ref":"#/components/schemas/DefaultResponse"
+            }
+        }
+    },
+    "tags": [
+        "user"
+    ],
+    "definitions": {
+        "UserRegistrationInfo": {
+            "type": "object",
+            "required": [
+                "userid", "pw"
+            ],
+            "properties": {
+                "userid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "pw": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }

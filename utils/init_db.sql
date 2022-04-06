@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS tb_user(
     username VARCHAR(30) NULL COMMENT '유저명',
     pw VARCHAR(100) NOT NULL COMMENT '비밀번호',
     create_at DATETIME NULL COMMENT '생성날짜',
-    activate TINYINT(4) DEFAULT 1 NOT NULL COMMENT 'row 활성화 상태',
+    update_at DATETIME NULL COMMENT '수정날짜',
+    activate TINYINT DEFAULT 1 NOT NULL COMMENT 'row 활성화 상태',
     PRIMARY KEY(id)
 )ENGINE=INNODB;
 
@@ -24,7 +25,6 @@ CREATE TABLE IF NOT EXISTS tb_board(
     content LONGTEXT NULL COMMENT '내용',
     create_at DATETIME NULL COMMENT '생성날짜',
     update_at DATETIME NULL COMMENT '수정날짜',
-    activate TINYINT(4) DEFAULT 1 NOT NULL COMMENT 'row 활성화 상태',
     PRIMARY KEY(id)
 )ENGINE=INNODB;
 
