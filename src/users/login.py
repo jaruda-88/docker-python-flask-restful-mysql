@@ -44,6 +44,8 @@ class Login(Resource):
             pw_hash = get_password_sha256_hash(pw)
 
             # 쿼리 작성
+            # UPDATE tb_user AS a, (SELECT id, userid, pw, username, connected_at FROM tb_user) AS b SET a.connected_at=NOW() WHERE b.userid='admin' AND b.pw='8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+            # UPDATE tb_user SET connected_at=NOW() WHERE(SELECT * FROM (SELECT count(*) FROM tb_user where userid='admin' AND pw='8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918') AS A)
             sql = '''SELECT id, userid, pw, username FROM tb_user WHERE userid=%s AND pw=%s;'''
             _flag, result = db.query(sql, (userid, pw_hash))
 

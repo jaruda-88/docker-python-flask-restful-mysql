@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS tb_user(
     pw VARCHAR(100) NOT NULL COMMENT '비밀번호',
     create_at DATETIME NULL COMMENT '생성날짜',
     update_at DATETIME NULL COMMENT '갱신날짜',
-    connect_at DATETIME NULL COMMENT '접속날짜',
+    connected_at DATETIME NULL COMMENT '접속날짜',
     activate TINYINT DEFAULT 1 NOT NULL COMMENT 'row 활성화 상태',
     PRIMARY KEY(id)
 )ENGINE=INNODB;
