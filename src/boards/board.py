@@ -125,7 +125,7 @@ class Board(Resource):
             # insert 실패 시 0
             if _flag and bool(result) == False:
                 response['resultCode'] = HTTPStatus.FORBIDDEN
-                raise Exception('Not found')
+                raise Exception('board_id does not match')
 
         except Exception as ex:
             response['resultMsg'] = ex.args[0]

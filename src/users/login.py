@@ -1,10 +1,15 @@
 from http import HTTPStatus
+from math import fabs
 from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
-from utils.function import get_add_hour_to_dt_now, encode_token, get_password_sha256_hash
-
+from utils.function import (
+    get_add_hour_to_dt_now, 
+    encode_token, 
+    get_password_sha256_hash,
+    get_dt_now_to_str
+)
 
 db = database.DBHandler()
 
@@ -43,25 +48,28 @@ class Login(Resource):
             # db 검색을 위해 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
 
+            dt = get_dt_now_to_str()
+
             # 쿼리 작성
-            # UPDATE tb_user AS a, (SELECT id, userid, pw, username, connected_at FROM tb_user) AS b SET a.connected_at=NOW() WHERE b.userid='admin' AND b.pw='8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
-            # UPDATE tb_user SET connected_at=NOW() WHERE(SELECT * FROM (SELECT count(*) FROM tb_user where userid='admin' AND pw='8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918') AS A)
-            sql = '''SELECT id, userid, pw, username FROM tb_user WHERE userid=%s AND pw=%s;'''
-            _flag, result = db.query(sql, (userid, pw_hash))
+            # UPDATE tb_user SET connected_at=NOW() WHERE userid='a' AND pw='8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+            # UPDATE tb_user SET connected_at=NOW() WHERE userid='a' AND pw='8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+            # SELECT ROW_COUNT() AS result;
+            # SELECT id, userid, pw, username FROM tb_user WHERE userid=%s AND pw=%s;
+            sql = '''UPDATE tb_user SET connected_at=%s WHERE activate=1 AND userid=%s AND pw=%s;'''
+            _flag, result = db.executer(sql, (dt, userid, pw_hash))
 
             if _flag == False:
                 response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{result[0]} : {result[1]}")
 
-            if _flag and result is None or len(result) <= 0:
+            if _flag and bool(result) == False:
                 response['resultCode'] = HTTPStatus.FORBIDDEN
                 raise Exception("userid or password does not match")
 
             # 토큰 설정
             payload = {
-                'id': result[0]['id'],
-                'userid': result[0]['userid'],
-                'username': result[0]['username'],
+                'userid': userid,
+                'connected_at': dt,
                 'exp': get_add_hour_to_dt_now(value=1,tz='Asia/Seoul')
             }
 

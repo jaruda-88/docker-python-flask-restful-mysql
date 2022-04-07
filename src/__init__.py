@@ -7,7 +7,6 @@ blueprint = Blueprint("api", __name__)
 api = Api(blueprint)
 
 
-
 from src.users.user import User
 from src.users.login import Login
 from src.boards.board import Board
