@@ -1,6 +1,3 @@
-from re import M
-
-
 board_post = {
     "summary": "POST board writer",
     "consumes": "application/json",

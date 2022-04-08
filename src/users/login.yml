@@ -17,7 +17,7 @@ responses:
         schema:
             $ref: '#/components/schemas/DefaultResponse'
 tags:
-    - user
+    - login
 definitions:
     LoginUserInfo:
         type: object

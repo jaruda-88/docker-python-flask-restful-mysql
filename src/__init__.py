@@ -2,7 +2,6 @@ from flask import Blueprint
 from flask_restful import Api
 from utils.settings import BUILD
 
-
 blueprint = Blueprint("api", __name__)
 api = Api(blueprint)
 

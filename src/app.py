@@ -3,8 +3,10 @@ from flask import Flask
 
 def register_blueprints(app):
     from src import blueprint
+    from src.users.user_search import bp as UserSearch
 
     app.register_blueprint(blueprint, url_prefix="/api")
+    app.register_blueprint(UserSearch)
 
 
 def create_swagger(app):
