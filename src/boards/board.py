@@ -3,7 +3,11 @@ from flask import jsonify, request as f_request
 from flask_restful import Resource
 from flasgger import Swagger, swag_from
 import utils.database as database
-from src.boards.board_method import board_post, board_get, board_delete
+from src.boards.board_methods import (
+    board_post,
+    board_get, 
+    board_delete
+    )
 from utils.function import get_dt_now_to_str, check_token
 
 

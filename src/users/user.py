@@ -6,6 +6,7 @@ import utils.database as database
 from src.users.user_methods import (
     user_get, 
     user_post,
+    user_put,
 )
 from utils.function import (
     check_token, 
@@ -20,7 +21,7 @@ db = database.DBHandler()
 class User(Resource):
     @swag_from(user_post)
     def post(self):
-        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : 'Ok' }
+        response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg" : 'Ok' }
         try:
             rj = f_request.get_json()
 
@@ -74,6 +75,8 @@ class User(Resource):
             if type(result) is int and bool(result) == False: 
                 response["resultCode"] = HTTPStatus.FORBIDDEN
                 raise Exception('userid already registered')
+
+            response["resultCode"] = HTTPStatus.OK
             
         except Exception as ex:
             response["resultMsg"] = ex.args[0]
@@ -86,7 +89,7 @@ class User(Resource):
             
     @swag_from(user_get)
     def get(self):
-        response = { "resultCode" : HTTPStatus.OK, "resultMsg" : '' }
+        response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg" : '' }
         try:
             code, payload = check_token(f_request.headers)
 
@@ -107,12 +110,90 @@ class User(Resource):
                 response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("not user data")
 
+            response["resultCode"] = HTTPStatus.OK
             response["resultMsg"] = result[0]
                 
         except Exception as ex:
             response["resultMsg"] = ex.args[0]
 
         if response["resultCode"] == HTTPStatus.OK:
+            return jsonify(response)
+        else:
+            return response, HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+    @swag_from(user_put)
+    def put(self):
+        response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
+        
+        try:
+            response['resultCode'], payload = check_token(f_request.headers)
+
+            if response['resultCode'] != HTTPStatus.OK:
+                raise Exception(payload)
+
+            rj = f_request.get_json()
+
+            if rj is None:
+                response['resultCode'] = HTTPStatus.NO_CONTENT
+                raise Exception('request data is empty')
+
+            if rj['id'] is None:
+                response['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception('Not found id')
+
+            if rj['userid'] is None:
+                response['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception('Not found userid')
+
+            if rj['username'] is None:
+                response['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception('Not found username')
+
+            if rj['pw'] is None:
+                response['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception('Not found password')
+
+            id = rj['id']
+            userid = rj['userid']
+            username = rj['username']
+            pw = rj['pw']
+
+            if int(id) <= 0:
+                response['resultCode'] = HTTPStatus.NO_CONTENT
+                raise Exception('No value is id')
+
+            if userid == '':
+                response['resultCode'] = HTTPStatus.NO_CONTENT
+                raise Exception('userid is empty')
+            
+            if pw == '':
+                response['resultCode'] = HTTPStatus.NO_CONTENT
+                raise Exception('password is empty')
+
+            # 비밀번호 암호화
+            pw_hash = get_password_sha256_hash(pw)
+
+            dt = get_dt_now_to_str()
+
+            sql ='''UPDATE tb_user SET userid=%s, username=%s, pw=%s, update_at=%s WHERE id=%d AND NOT pw=%s;'''
+            _flag, result = db.executer(sql, (userid, username, pw_hash, dt, int(id), pw_hash))
+
+            if _flag == False:
+                response['resultCode'] = HTTPStatus.NOT_FOUND
+                raise Exception(f'{result[0]} : {result[1]}')
+
+            if _flag and bool(result) == False:
+                response['resultCode'] = HTTPStatus.FORBIDDEN
+                raise Exception('Password is the same as before')
+            
+            response["resultCode"] = HTTPStatus.OK
+            response['resultMsg'] = "Ok"
+
+        except Exception as ex:
+            response['resultMsg'] = ex.args[0]
+
+        if response['resultCode'] == HTTPStatus.OK:
             return jsonify(response)
         else:
             return response, HTTPStatus.INTERNAL_SERVER_ERROR

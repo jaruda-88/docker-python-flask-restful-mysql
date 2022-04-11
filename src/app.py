@@ -65,7 +65,7 @@ def init_db():
 
 def create_app():
     from flask_cors import CORS
-    from utils.settings import BUILD
+    from utils.settings import BUILD        
 
     app = Flask(__name__)
 

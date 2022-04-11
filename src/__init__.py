@@ -7,7 +7,7 @@ api = Api(blueprint)
 
 
 from src.users.user import User
-from src.users.login import Login
+from src.signin.login import Login
 from src.boards.board import Board
 
 if BUILD['type'] != 'server':

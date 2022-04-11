@@ -1,5 +1,5 @@
+import sys
 from http import HTTPStatus
-from math import fabs
 from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
@@ -11,13 +11,14 @@ from utils.function import (
     get_dt_now_to_str
 )
 
+
 db = database.DBHandler()
 
 
 class Login(Resource):
     @swag_from('login.yml', validation=True)
     def post(self):
-        response = { 'resultCode': HTTPStatus.OK, 'resultMsg': '' }   
+        response = { 'resultCode': HTTPStatus.INTERNAL_SERVER_ERROR, 'resultMsg': '' }   
 
         try:
             rj = f_request.get_json()
@@ -76,6 +77,9 @@ class Login(Resource):
             # 토큰 생성
             token = encode_token(payload)
 
+            print(payload,file=sys.stderr)
+
+            response["resultCode"] = HTTPStatus.OK
             response['resultMsg'] = token
         except Exception as ex:
             response['resultMsg'] = ex.args[0]

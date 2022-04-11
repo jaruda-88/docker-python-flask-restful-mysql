@@ -5,17 +5,18 @@ from utils.settings import DATABASE_CONFIG
 class DBHandler:
     def __init__(self):
         """ mysql database controler """
+        self.config = DATABASE_CONFIG
 
     
     def connector(self):
         """ db connector """
         try:
             db = pymysql.connect(  
-                    host=DATABASE_CONFIG['HOST'], 
-                    port=DATABASE_CONFIG['PORT'], 
-                    user=DATABASE_CONFIG['USER'], 
-                    password=DATABASE_CONFIG['PASSWORD'], 
-                    database=DATABASE_CONFIG['DB'], 
+                    host=self.config['HOST'], 
+                    port=self.config['PORT'], 
+                    user=self.config['USER'], 
+                    password=self.config['PASSWORD'], 
+                    database=self.config['DB'], 
                     charset='utf8' 
                 )
             return True, db 

@@ -38,6 +38,8 @@ def decode_token(token):
     # token 유효시간 만료 에러
     except jwt.ExpiredSignatureError:
         return None
+    except jwt.InvalidTokenError:
+        return None
 
 
 def check_token(headers):
@@ -51,7 +53,7 @@ def check_token(headers):
         payload = decode_token(auth)
 
         if payload is None:
-            return HTTPStatus.NOT_ACCEPTABLE, "Token Expiration"
+            return HTTPStatus.UNAUTHORIZED, "Token Expiration or error value"
 
         return HTTPStatus.OK, payload
     except Exception as ex:
