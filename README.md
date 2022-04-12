@@ -1,25 +1,34 @@
 # project1_back-end
 
-
-## 프로젝트 환경
+## 플라스크(python)
 ```
-python
-api-server : AWS EC2 width docker
-back-end : python.flask
-db : 
+· RestFul api
+· server : AWS EC2 width docker
+· database : 
     - local(test-server) AWS EC2 width docker(mysql)
     - server AWS RDS mysql
-api : RestFul
 ```
 
-## 사용 라이브러리
+## 주요 라이브러리
 ```
-swagger : flasgger
-mysql : pymysql
-token : pyjwt
+· swagger : flasgger
+· mysql : pymysql
+· token : pyjwt
 ```
 
 ## 빌드
 ```
-docker-compose up -d
+· install : docker-compose up -d
+· update : 
+    - docker-compose pull
+      docker-compose up --force-recreate --build -d
+      docker image prune -f
 ```
+
+## 기타
+```
+· docker logs에서 python print 
+    - import sys
+      print("log",file=sys.stderr)
+```
+      

@@ -50,7 +50,7 @@ def get_userinfos_in_id(pk):
         return response, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@bp.route('/userid/<userid>', methods=['GET'])
+@bp.route('/id/<userid>', methods=['GET'])
 @swag_from(user_get_in_userid, methods=['GET'])
 def get_userinfos_in_userid(userid):
     response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
@@ -86,7 +86,7 @@ def get_userinfos_in_userid(userid):
         return response, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@bp.route('/username/<name>', methods=['GET'])
+@bp.route('/name/<name>', methods=['GET'])
 @swag_from(user_get_in_username, methods=['GET'])
 def get_userinfos_in_username(name):
     response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
