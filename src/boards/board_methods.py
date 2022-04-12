@@ -1,20 +1,14 @@
-board_post = {
-    "summary": "POST board writer",
+import copy
+
+
+base = {
     "consumes": "application/json",
     "parameters": [
-        { "$ref": "#/components/parameters/TokenParam" },
-        {
-            "name": "writer",
-            "in": "body",
-            "description": "register board content",
-            "schema": {
-                "$ref": "#/definitions/WritingInfo"
-            }
-        }
+        { "$ref": "#/components/parameters/TokenParam" }
     ],
-    "responses": {
+    "responses":{
         "200": {
-            "description": "OK",
+            "description": "Ok",
             "schema": {
                 "$ref": "#/components/schemas/DefaultResponse"
             }
@@ -26,8 +20,8 @@ board_post = {
             }
         }
     },
-    "tags": [
-        "board"
+    "tags":[
+        "boards"
     ],
     "definitions": {
         "WritingInfo": {
@@ -43,36 +37,8 @@ board_post = {
                     "type": "string"
                 }
             }
-        }
-    }
-}
-
-
-board_get = {
-    "summary": "GET board list",
-    "consumes": "application/json",
-    "parameters": [
-        { "$ref" : "#/components/parameters/TokenParam" }
-    ],
-    "responses": {
-        "200": {
-            "description": "OK",
-            "schema": {
-                "$ref": "#/definitions/BoardResponse"
-            }
         },
-        "500": {
-            "description": "Errors",
-            "schema": {
-                "$ref": "#/components/schemas/DefaultResponse"
-            }
-        }
-    },
-    "tags": [
-        "board"
-    ],
-    "definitions": {
-        "BoardResponse": {
+        "ResponseBoardInfo": {
             "type": "object",
             "properties": {
                 "resultCode": {
@@ -89,43 +55,89 @@ board_get = {
                         "content": {
                             "type": "string"
                         },
+                        "create_at": {
+                            "type": "string"
+                        },
                         "update_at": {
                             "type": "string"
                         }
                     }
                 }
             }
+        },
+        "BoardEditInfo": {
+            "type": "object",
+            "required": [
+                "writer", "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "writer": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+            }
         }
     }
 }
 
-board_delete = {
-    "summary": "DELETE board row",
-    "consumes": "application/json",
-    "parameters": [
-        { "$ref": "#/components/parameters/TokenParam" },
-        {
-            "name": "board_id",
-            "in": "query",
-            "description": "pk",
-            "type": "integer"
-        }
-    ],
-    "tags": [
-        "board"
-    ],
-    "responses": {
-        "200": {
-            "description": "OK",
-            "schema": {
-                "$ref": "#/components/schemas/DefaultResponse"
-            }
-        },
-        "500": {
-            "description": "Errors",
-            "schema": {
-                "$ref": "#/components/schemas/DefaultResponse"
-            }
+
+# 글 작성 
+writing = copy.deepcopy(base)
+writing["summary"] = "POST board writer"
+writing["parameters"].append(
+    {
+        "name": "writer",
+        "in": "body",
+        "description": "register board content",
+        "schema": {
+            "$ref": "#/definitions/WritingInfo"
         }
     }
-}
+)
+
+
+# 글 수정 
+edit = copy.deepcopy(base)
+edit["summary"] = "PUT edit"
+edit["parameters"].append(
+    {
+        "name": "edit",
+        "in": "body",
+        "description": "modify written",
+        "schema": {
+            "$ref": "#/definitions/BoardEditInfo"
+        }
+    }
+)
+
+
+# 글 삭제
+delete_post = copy.deepcopy(base)
+delete_post["summary"] = "DELETE board row"
+delete_post["parameters"].append(
+    {
+        "name": "id",
+        "in": "path",
+        "required" : True,
+        "description": "board id(pk)",
+        "type": "integer"
+    }
+)
+
+
+# 작성한 목록
+written_list = copy.deepcopy(base)
+written_list["summary"] = "Get boardinfos"
+written_list["responses"]["200"].clear()
+written_list["responses"]["200"] =\
+    {
+        "description": "Ok",
+        "schema": {
+            "$ref": "#/definitions/ResponseBoardInfo"
+        }
+    }

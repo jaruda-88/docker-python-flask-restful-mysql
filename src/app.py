@@ -4,9 +4,11 @@ from flask import Flask
 def register_blueprints(app):
     from src import blueprint
     from src.users.user_search import bp as UserSearch
+    from src.boards.board_rd import bp as BoardRD
 
     app.register_blueprint(blueprint, url_prefix="/api")
     app.register_blueprint(UserSearch)
+    app.register_blueprint(BoardRD)
 
 
 def create_swagger(app):

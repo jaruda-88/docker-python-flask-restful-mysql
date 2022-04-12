@@ -28,12 +28,12 @@ class User(Resource):
             rj = f_request.get_json()
 
             # request data 확인
-            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('userid', 'username', 'pw') )
+            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('userid', 'pw') )
             if response['resultCode'] != HTTPStatus.OK:
                 raise Exception(response['resultMsg'])
 
             userid = rj['userid']
-            usernm = rj['username']
+            usernm = rj['username'] if rj['username'] else ''
             pw = rj['pw']
 
             # 비밀번호 암호화
@@ -120,13 +120,13 @@ class User(Resource):
             rj = f_request.get_json()
 
             # request data 확인
-            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('id', 'userid', 'username', 'pw') )
+            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('id', 'userid', 'pw') )
             if response['resultCode'] != HTTPStatus.OK:
                 raise Exception(response['resultMsg'])
 
             id = rj['id']
             userid = rj['userid']
-            username = rj['username']
+            username = rj['username'] if rj['username'] else ''
             pw = rj['pw']
 
             # 비밀번호 암호화
@@ -135,7 +135,7 @@ class User(Resource):
             dt = get_dt_now_to_str()
 
             # 쿼리 작성
-            sql ='''UPDATE tb_user SET userid=%s, username=%s, pw=%s, update_at=%s WHERE id=%d AND NOT pw=%s;'''
+            sql ='''UPDATE tb_user SET userid=%s, username=%s, pw=%s, update_at=%s WHERE id=%s AND NOT pw=%s;'''
             _flag, result = db.executer(sql, (userid, username, pw_hash, dt, int(id), pw_hash))
 
             # db 조회 실패
