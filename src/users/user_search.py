@@ -21,19 +21,19 @@ def get_userinfos_in_id(pk):
     response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
     
     try:
+        # 토큰 확인
         response['resultCode'], payload = check_token(f_request.headers)
-
-        # 토큰 복호화 실패
         if response['resultCode'] != HTTPStatus.OK:
             raise Exception(payload)
-            
+
+        # 쿼리 작성
         if int(pk) == -1:
             sql = '''SELECT id, userid, username, connected_at FROM tb_user;'''
         else:
             sql = f'''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND id={int(pk)};'''
-        
         _flag, result = db.query(sql)
 
+        # db 조회 실패
         if _flag == False:
             response['resultCode'] = HTTPStatus.NOT_FOUND
             raise Exception(f"{result[0] : result[1]}")
@@ -56,8 +56,8 @@ def get_userinfos_in_userid(userid):
     response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
 
     try:
+        # 토큰 확인
         response['resultCode'], payload = check_token(f_request.headers)
-
         if response['resultCode'] != HTTPStatus.OK:
             raise Exception(payload)
 
@@ -65,9 +65,11 @@ def get_userinfos_in_userid(userid):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('No value')
 
+        # 쿼리 작성
         sql = '''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND userid=%s'''
         _flag, result = db.query(sql, userid)
 
+        # db 조회 실패
         if _flag == False:
             response['resultCode'] = HTTPStatus.NOT_FOUND
             raise Exception(f"{result[0]} : {result[1]}")
@@ -90,8 +92,8 @@ def get_userinfos_in_username(name):
     response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
 
     try:
+        # 토큰 확인
         response['resultCode'], payload = check_token(f_request.headers)
-
         if response['resultCode'] != HTTPStatus.OK:
             raise Exception(payload)
 
@@ -99,10 +101,12 @@ def get_userinfos_in_username(name):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('No value')
 
+        # 쿼리 작성
         sql = '''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND username LIKE %s'''
         search = "%{}%".format(name)
         _flag, result = db.query(sql, search)
 
+        # db 조회 실패
         if _flag == False:
             response['resultCode'] = HTTPStatus.NOT_FOUND
             raise Exception(f"{result[0]} : {result[1]}")

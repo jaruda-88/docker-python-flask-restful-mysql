@@ -2,7 +2,7 @@
 
 
 BUILD = { 
-    'type' : 'server',
+    'type' : 'develop',
     'db_host' : { 
         "server" : 'mydatabase.cvc2dcwg4ut0.ap-northeast-2.rds.amazonaws.com', 
         'local' : '3.38.135.214', 

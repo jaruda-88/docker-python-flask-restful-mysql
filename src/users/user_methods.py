@@ -91,8 +91,8 @@ base = {
 
 
 # 유저 정보(토큰 인증)
-user_get = copy.deepcopy(base)
-user_get['summary'] = "GET user info"
+userinfo = copy.deepcopy(base)
+userinfo['summary'] = "GET user info"
 
 
 # 유저 정보 DB pk 검색
@@ -162,9 +162,9 @@ user_get_in_username['responses']['200'] =\
 
 
 # 유저 등록
-user_post = copy.deepcopy(base)
-user_post['summary'] = "POST registration user"
-user_post['parameters'] = [
+registration = copy.deepcopy(base)
+registration['summary'] = "POST registration user"
+registration['parameters'] = [
     {
         "name": "registration request",
         "in": "body",
@@ -177,9 +177,9 @@ user_post['parameters'] = [
 
 
 # 유저 수정
-user_put = copy.deepcopy(base)
-user_put['summary'] = "PUT edit user"
-user_put['parameters'].append(
+edit = copy.deepcopy(base)
+edit['summary'] = "PUT edit user"
+edit['parameters'].append(
     {
         "name": "user edit request",
         "in": "body",

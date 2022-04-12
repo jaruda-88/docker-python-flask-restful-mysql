@@ -59,10 +59,12 @@ class Login(Resource):
             sql = '''UPDATE tb_user SET connected_at=%s WHERE activate=1 AND userid=%s AND pw=%s;'''
             _flag, result = db.executer(sql, (dt, userid, pw_hash))
 
+            # db 조회 실패
             if _flag == False:
                 response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{result[0]} : {result[1]}")
 
+            # UPDATE 실패
             if _flag and bool(result) == False:
                 response['resultCode'] = HTTPStatus.FORBIDDEN
                 raise Exception("userid or password does not match")

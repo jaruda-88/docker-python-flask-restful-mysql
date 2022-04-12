@@ -4,14 +4,15 @@ from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
 from src.users.user_methods import (
-    user_get, 
-    user_post,
-    user_put,
+    userinfo, 
+    registration,
+    edit,
 )
 from utils.function import (
     check_token, 
     get_password_sha256_hash, 
-    get_dt_now_to_str
+    get_dt_now_to_str,
+    check_body_request
 )
 
 
@@ -19,39 +20,21 @@ db = database.DBHandler()
 
 
 class User(Resource):
-    @swag_from(user_post)
+    @swag_from(registration)
     def post(self):
         response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg" : 'Ok' }
+
         try:
             rj = f_request.get_json()
 
-            if rj is None:
-                response['resultCode'] = HTTPStatus.NO_CONTENT
-                raise Exception("request data is empty")
-
-            if rj['userid'] is None:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception("Not found userid")
-
-            if rj['username'] is None:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception("Not found username")
-
-            if rj['pw'] is None:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception("Not found pw")
+            # request data 확인
+            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('userid', 'username', 'pw') )
+            if response['resultCode'] != HTTPStatus.OK:
+                raise Exception(response['resultMsg'])
 
             userid = rj['userid']
             usernm = rj['username']
             pw = rj['pw']
-
-            if userid == "":
-                response["resultCode"] = HTTPStatus.NO_CONTENT
-                raise Exception('userid is empty')
-            
-            if pw == "":
-                response["resultCode"] = HTTPStatus.NO_CONTENT
-                raise Exception('password is empty')
 
             # 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
@@ -65,7 +48,7 @@ class User(Resource):
             DUAL WHERE NOT EXISTS(SELECT userid FROM tb_user WHERE userid=%s);''', 
             (userid, usernm, pw_hash, dt, dt, userid))
 
-            # db 쿼리 실패
+            # db 조회 실패
             if _flag == False:
                 response["resultCode"] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{result[0]} : {result[1]}")
@@ -77,6 +60,7 @@ class User(Resource):
                 raise Exception('userid already registered')
 
             response["resultCode"] = HTTPStatus.OK
+            response["resultMsg"] = 'Ok'
             
         except Exception as ex:
             response["resultMsg"] = ex.args[0]
@@ -87,25 +71,26 @@ class User(Resource):
             return response, HTTPStatus.INTERNAL_SERVER_ERROR
 
             
-    @swag_from(user_get)
+    @swag_from(userinfo)
     def get(self):
         response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg" : '' }
-        try:
-            code, payload = check_token(f_request.headers)
 
-            # 토큰 복호화 실패
-            if code != HTTPStatus.OK:
-                response['resultCode'] = code
+        try:
+            # 토큰 화인
+            response['resultCode'], payload = check_token(f_request.headers)
+            if response['resultCode'] != HTTPStatus.OK:
                 raise Exception(payload)
 
             # 쿼리 작성
-            sql = '''SELECT id, userid, username, create_at, connected_at FROM tb_user WHERE activate=1 AND userid=%s;'''
+            sql = '''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND userid=%s;'''
             _flag, result = db.query(sql, payload['userid'])
 
+            # db 조회 실패
             if _flag == False:
                 response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{result[0]} : {result[1]}")
-
+            
+            # SELECT 실패
             if _flag and result is None or len(result) <= 0:
                 response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception("not user data")
@@ -122,67 +107,43 @@ class User(Resource):
             return response, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-    @swag_from(user_put)
+    @swag_from(edit)
     def put(self):
         response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
         
         try:
+            # 토큰 확인
             response['resultCode'], payload = check_token(f_request.headers)
-
             if response['resultCode'] != HTTPStatus.OK:
                 raise Exception(payload)
 
             rj = f_request.get_json()
 
-            if rj is None:
-                response['resultCode'] = HTTPStatus.NO_CONTENT
-                raise Exception('request data is empty')
-
-            if rj['id'] is None:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception('Not found id')
-
-            if rj['userid'] is None:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception('Not found userid')
-
-            if rj['username'] is None:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception('Not found username')
-
-            if rj['pw'] is None:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception('Not found password')
+            # request data 확인
+            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('id', 'userid', 'username', 'pw') )
+            if response['resultCode'] != HTTPStatus.OK:
+                raise Exception(response['resultMsg'])
 
             id = rj['id']
             userid = rj['userid']
             username = rj['username']
             pw = rj['pw']
 
-            if int(id) <= 0:
-                response['resultCode'] = HTTPStatus.NO_CONTENT
-                raise Exception('No value is id')
-
-            if userid == '':
-                response['resultCode'] = HTTPStatus.NO_CONTENT
-                raise Exception('userid is empty')
-            
-            if pw == '':
-                response['resultCode'] = HTTPStatus.NO_CONTENT
-                raise Exception('password is empty')
-
             # 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
 
             dt = get_dt_now_to_str()
 
+            # 쿼리 작성
             sql ='''UPDATE tb_user SET userid=%s, username=%s, pw=%s, update_at=%s WHERE id=%d AND NOT pw=%s;'''
             _flag, result = db.executer(sql, (userid, username, pw_hash, dt, int(id), pw_hash))
 
+            # db 조회 실패
             if _flag == False:
                 response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception(f'{result[0]} : {result[1]}')
 
+            # UPDATE 실패
             if _flag and bool(result) == False:
                 response['resultCode'] = HTTPStatus.FORBIDDEN
                 raise Exception('Password is the same as before')
