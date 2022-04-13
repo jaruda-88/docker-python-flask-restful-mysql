@@ -23,6 +23,7 @@ ALTER TABLE tb_user COMMENT '유저 테이블';
 CREATE TABLE IF NOT EXISTS tb_board(
     id INT NOT NULL AUTO_INCREMENT COMMENT 'PK',
     writer VARCHAR(50) NOT NULL COMMENT '작성자',
+    title VARCHAR(100) NOT NULL COMMENT '제목',
     content LONGTEXT NULL COMMENT '내용',
     create_at DATETIME NULL COMMENT '생성날짜',
     update_at DATETIME NULL COMMENT '수정날짜',

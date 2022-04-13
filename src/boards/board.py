@@ -37,11 +37,12 @@ class Board(Resource):
             rj = f_request.get_json()
 
             # request data 확인
-            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('writer', 'content') )
+            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('writer', 'title', 'content') )
             if response['resultCode'] != HTTPStatus.OK:
                 raise Exception(response['resultMsg'])
 
             writer = rj['writer']
+            title = rj['title']
             content= rj['content']            
 
             # 로그인 유저와 작성자 매칭 확인
@@ -50,7 +51,8 @@ class Board(Resource):
             #     raise Exception("does not match writer(userid)")
 
             # 쿼리 작성
-            sql = '''INSERT INTO tb_board (writer, content, create_at, update_at) VALUES(%s, %s, %s, %s);'''
+            sql = '''INSERT INTO tb_board (writer, title, content, create_at, update_at) 
+            VALUES(%s, %s, %s, %s, %s);'''
             dt = get_dt_now_to_str()
             is_connected, conn = db.connector()
             
@@ -59,7 +61,7 @@ class Board(Resource):
 
             try:
                 with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-                    cursor.execute(sql, (writer, content, dt, dt))
+                    cursor.execute(sql, (writer, title, content, dt, dt))
                     conn.commit()
                     response['resultCode'] = HTTPStatus.OK
                     response['resultMsg'] = cursor.lastrowid
@@ -89,7 +91,9 @@ class Board(Resource):
                 raise Exception(payload)
 
             # 쿼리 작성
-            sql = '''SELECT id, writer, content, create_at, update_at FROM tb_board WHERE writer=%s'''
+            sql = '''SELECT id, writer, title content, create_at, update_at 
+            FROM tb_board 
+            WHERE writer=%s'''
             _flag, result = db.query(sql, payload['userid'])
 
             if _flag == False:
@@ -121,18 +125,21 @@ class Board(Resource):
             rj = f_request.get_json()
 
             # request data 확인
-            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('id', 'writer') )
+            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('id', 'title' 'writer') )
             if response['resultCode'] != HTTPStatus.OK:
                 raise Exception(response['resultMsg'])
 
             id = rj['id']
+            title = rj['title']
             writer = rj['writer']
             content = rj['content'] if rj['content'] else ''
             dt = get_dt_now_to_str()
 
             # 쿼리 작성
-            sql = '''UPDATE tb_board SET writer=%s, content=%s, update_at=%s WHERE id=%s;'''
-            _flag, result = db.executer(sql, (writer, content, dt, int(id)) )
+            sql = '''UPDATE tb_board 
+            SET writer=%s, title=%s, content=%s, update_at=%s 
+            WHERE id=%s;'''
+            _flag, result = db.executer(sql, (writer, title, content, dt, int(id)) )
 
             if _flag == False:
                 response['resultCode'] = HTTPStatus.FORBIDDEN

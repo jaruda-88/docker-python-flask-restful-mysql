@@ -1,6 +1,6 @@
 import copy
 
-
+# 게시판 공통 dto
 base = {
     "consumes": "application/json",
     "parameters": [
@@ -33,6 +33,9 @@ base = {
                 "writer": {
                     "type": "string"
                 },
+                "title": {
+                    "type": "string"
+                },
                 "content": {
                     "type": "string"
                 }
@@ -50,6 +53,9 @@ base = {
                             "type": "integer"
                         },
                         "writer": {
+                            "type": "string"
+                        },
+                        "title": {
                             "type": "string"
                         },
                         "content": {
@@ -75,6 +81,9 @@ base = {
                     "type": "integer"
                 },
                 "writer": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 },
                 "content": {
@@ -132,7 +141,7 @@ delete_post["parameters"].append(
 
 # 작성한 목록
 written_list = copy.deepcopy(base)
-written_list["summary"] = "Get boardinfos"
+written_list["summary"] = "GET boardinfos"
 written_list["responses"]["200"].clear()
 written_list["responses"]["200"] =\
     {
@@ -141,3 +150,72 @@ written_list["responses"]["200"] =\
             "$ref": "#/definitions/ResponseBoardInfo"
         }
     }
+
+
+# 게시글 목록
+written_all_list = copy.deepcopy(written_list)
+written_all_list["summary"] = "GET boardinfos in id"
+written_all_list["parameters"].append(
+    {
+        "name": "id",
+        "in": "path",
+        "required": True,
+        "description": "board id(pk), -1(all)",
+        "type": "integer"
+    }
+)
+
+
+# 작성자 검색
+get_board_in_writer = copy.deepcopy(written_list)
+get_board_in_writer["summary"] = "GET boardinfos in userid"
+get_board_in_writer["parameters"].append(
+    {
+        "name": "writer",
+        "in": "path",
+        "required": True,
+        "description": "userid",
+        "type": "string"
+    }
+)
+
+
+# 제목 검색
+get_board_in_title = copy.deepcopy(written_list)
+get_board_in_title["parameters"].append(
+    {
+        "name": "title",
+        "in": "path",
+        "required": True,
+        "description": "title",
+        "type": "string"
+    }
+)
+
+
+# 내용 검색
+get_board_in_content = copy.deepcopy(written_list)
+get_board_in_content["summary"] = "GET boardinfos in content"
+get_board_in_content["parameters"].append(
+    {
+        "name": "content",
+        "in": "path",
+        "required": True,
+        "description": "content",
+        "type": "string"
+    }
+)
+
+
+# 제목 + 내용 검색
+get_board_search = copy.deepcopy(written_list)
+get_board_search["summary"] = "GET boardinfos in title or content"
+get_board_search["parameters"].append(
+    {
+        "name": "contents",
+        "in": "path",
+        "required": True,
+        "description": "title + content",
+        "type": "string"
+    }
+)

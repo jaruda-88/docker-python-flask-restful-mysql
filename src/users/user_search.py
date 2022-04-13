@@ -7,8 +7,11 @@ from src.users.user_methods import (
     user_get_in_id, 
     user_get_in_userid,
     user_get_in_username
-)
-from utils.function import check_token
+    )
+from utils.function import (
+    check_token,
+    is_blank_str
+    )
 
 
 bp = Blueprint("user_search", __name__, url_prefix="/api/user")
@@ -26,11 +29,18 @@ def get_userinfos_in_id(pk):
         if response['resultCode'] != HTTPStatus.OK:
             raise Exception(payload)
 
+        if pk is None:
+            response['resultCode'] = HTTPStatus.NO_CONTENT
+            raise Exception('pk is empyt')
+
         # 쿼리 작성
         if int(pk) == -1:
-            sql = '''SELECT id, userid, username, connected_at FROM tb_user;'''
+            sql = '''SELECT id, userid, username, connected_at 
+            FROM tb_user;'''
         else:
-            sql = f'''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND id={int(pk)};'''
+            sql = f'''SELECT id, userid, username, connected_at 
+            FROM tb_user 
+            WHERE activate=1 AND id={int(pk)};'''
         _flag, result = db.query(sql)
 
         # db 조회 실패
@@ -61,12 +71,14 @@ def get_userinfos_in_userid(userid):
         if response['resultCode'] != HTTPStatus.OK:
             raise Exception(payload)
 
-        if userid == '':
+        if is_blank_str(userid):
             response['resultCode'] = HTTPStatus.NO_CONTENT
-            raise Exception('No value')
+            raise Exception('userid is empyt')
 
         # 쿼리 작성
-        sql = '''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND userid=%s'''
+        sql = '''SELECT id, userid, username, connected_at 
+        FROM tb_user 
+        WHERE activate=1 AND userid=%s'''
         _flag, result = db.query(sql, userid)
 
         # db 조회 실패
@@ -97,12 +109,14 @@ def get_userinfos_in_username(name):
         if response['resultCode'] != HTTPStatus.OK:
             raise Exception(payload)
 
-        if name == '':
+        if is_blank_str(name):
             response['resultCode'] = HTTPStatus.NO_CONTENT
-            raise Exception('No value')
+            raise Exception('name is empty')
 
         # 쿼리 작성
-        sql = '''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND username LIKE %s'''
+        sql = '''SELECT id, userid, username, connected_at 
+        FROM tb_user 
+        WHERE activate=1 AND username LIKE %s'''
         search = "%{}%".format(name)
         _flag, result = db.query(sql, search)
 
@@ -113,6 +127,7 @@ def get_userinfos_in_username(name):
 
         response["resultCode"] = HTTPStatus.OK
         response['resultMsg'] = result
+
     
     except Exception as ex:
         response['resultMsg'] = ex.args[0]

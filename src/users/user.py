@@ -82,7 +82,9 @@ class User(Resource):
                 raise Exception(payload)
 
             # 쿼리 작성
-            sql = '''SELECT id, userid, username, connected_at FROM tb_user WHERE activate=1 AND userid=%s;'''
+            sql = '''SELECT id, userid, username, connected_at 
+            FROM tb_user 
+            WHERE activate=1 AND userid=%s;'''
             _flag, result = db.query(sql, payload['userid'])
 
             # db 조회 실패
@@ -135,7 +137,9 @@ class User(Resource):
             dt = get_dt_now_to_str()
 
             # 쿼리 작성
-            sql ='''UPDATE tb_user SET userid=%s, username=%s, pw=%s, update_at=%s WHERE id=%s AND NOT pw=%s;'''
+            sql ='''UPDATE tb_user 
+            SET userid=%s, username=%s, pw=%s, update_at=%s 
+            WHERE id=%s AND NOT pw=%s;'''
             _flag, result = db.executer(sql, (userid, username, pw_hash, dt, int(id), pw_hash))
 
             # db 조회 실패

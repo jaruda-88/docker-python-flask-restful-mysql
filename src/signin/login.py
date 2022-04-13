@@ -41,7 +41,9 @@ class Login(Resource):
             # UPDATE tb_user SET connected_at=NOW() WHERE userid='a' AND pw='8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
             # SELECT ROW_COUNT() AS result;
             # SELECT id, userid, pw, username FROM tb_user WHERE userid=%s AND pw=%s;
-            sql = '''UPDATE tb_user SET connected_at=%s WHERE activate=1 AND userid=%s AND pw=%s;'''
+            sql = '''UPDATE tb_user 
+            SET connected_at=%s 
+            WHERE activate=1 AND userid=%s AND pw=%s;'''
             _flag, result = db.executer(sql, (dt, userid, pw_hash))
 
             # db 조회 실패
