@@ -16,9 +16,12 @@ jobs:
       - name: Set up QEMU For Docker
         uses: docker/setup-qemu-action@v1
         
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
-        with:
-          script: "docker-compose pull && docker-compose up -d && docker-compose up --force-recreate --build -d && docker image prune -f"
+      - name: Dockercompose update
+        run: docker-compose pull
+        
+      - name: Build
+        run: docker-compose up -d
+
+
         
       
