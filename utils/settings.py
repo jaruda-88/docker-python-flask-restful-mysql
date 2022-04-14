@@ -1,4 +1,4 @@
-# settings1
+# settings
 
 
 BUILD = { 
