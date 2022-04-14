@@ -1,33 +1,24 @@
-# This is a basic workflow to help you get started with Actions
+name: api ci
 
-name: buld N push
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the develop branch
   push:
-    branches: [ develop ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+    branches:
+      - develop
+      
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  docker:
+    name: Docker Compose
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # image update
-      - name: docker image pull
-        run: docker-compose.yml pull
+      - name: Checkout
+        uses: actions/checkout@v2
         
-      # docker build
-      - name: docker recreate
-        run: docker-compose.yml up --force-recreate --build -d
+      - name: Set up QEMU For Docker
+        uses: docker/setup-qemu-action@v1
         
-      # prev image delete
-      - name: image clean up
-        run: docker image prune -f
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          script: "docker-compose pull && docker-compose up -d && docker-compose up --force-recreate --build -d && docker image prune -f"
+        
+      
