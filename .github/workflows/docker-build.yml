@@ -22,11 +22,11 @@ jobs:
     steps:
       # image update
       - name: docker image pull
-        run: docker-compose pull
+        run: docker-compose.yml pull
         
       # docker build
       - name: docker recreate
-        run: docker-compose up --force-recreate --build -d
+        run: docker-compose.yml up --force-recreate --build -d
         
       # prev image delete
       - name: image clean up
