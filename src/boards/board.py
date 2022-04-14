@@ -91,7 +91,7 @@ class Board(Resource):
                 raise Exception(payload)
 
             # 쿼리 작성
-            sql = '''SELECT id, writer, title content, create_at, update_at 
+            sql = '''SELECT id, writer, title, content, create_at, update_at 
             FROM tb_board 
             WHERE writer=%s'''
             _flag, result = db.query(sql, payload['userid'])
