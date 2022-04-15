@@ -84,12 +84,14 @@ def get_board_in_id(id):
 
         # 쿼리 작성
         if int(id) == -1:
-            sql = '''SELECT id, writer, title, content, create_at, update_at
-            FROM tb_board;'''
+            sql = '''SELECT id, writer, title, content, update_at
+            FROM tb_board
+            ORDER BY update_at DESC;'''
         else:
-            sql = f'''SELECT id, writer, title, content, create_at, update_at 
+            sql = f'''SELECT id, writer, title, content, update_at 
             FROM tb_board;
-            WHERE id={int(id)};'''
+            WHERE id={int(id)}
+            ORDER BY update_at DESC;'''
         _flag, result = db.query(sql)
 
         if _flag == False:
@@ -110,7 +112,7 @@ def get_board_in_id(id):
 
 @bp.route('/writer/<writer>', methods=['GET'])
 @swag_from(get_board_in_writer, methods=['GET'])
-def get_board_int_writer(writer):
+def get_board_writer(writer):
     response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
     
     try:
@@ -125,10 +127,11 @@ def get_board_int_writer(writer):
             raise Exception('value is empty')
 
         # 쿼리 작성
-        sql = f'''SELECT id, writer, title, content, create_at, update_at
+        sql = '''SELECT id, writer, title, content, update_at
         FROM tb_board
-        WHERE writer={str(writer)};'''
-        _flag, result = db.query(sql)
+        WHERE writer=%s
+        ORDER BY update_at DESC;'''
+        _flag, result = db.query(sql, writer)
 
         if _flag == False:
             response['resultCode'] = HTTPStatus.NOT_FOUND
@@ -148,7 +151,7 @@ def get_board_int_writer(writer):
 
 @bp.route('/title/<title>', methods=['GET'])
 @swag_from(get_board_in_title, methods=['GET'])
-def get_board_in_title(title):
+def get_board_title(title):
     response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
 
     try:
@@ -163,9 +166,10 @@ def get_board_in_title(title):
             raise Exception('title is empyt')
         
         # 쿼리 작성
-        sql = '''SELECT id, writer, title, content, create_at, update_at
+        sql = '''SELECT id, writer, title, content, update_at
         FROM tb_board
-        WHERE title LIKE %s;'''
+        WHERE title LIKE %s
+        ORDER BY update_at DESC;'''
         _flag, result = db.query(sql, f'%{title}%')
 
         if _flag == False:
@@ -186,7 +190,7 @@ def get_board_in_title(title):
 
 @bp.route('/content/<content>', methods=['GET'])
 @swag_from(get_board_in_content, methods=['GET'])
-def get_board_in_content(content):
+def get_board_content(content):
     response = { 'resultCode' : HTTPStatus.INTERNAL_SERVER_ERROR, 'resultMsg' : '' }
 
     try:
@@ -201,9 +205,10 @@ def get_board_in_content(content):
             raise Exception('content is empty')
 
         # 쿼리 작성
-        sql = '''SELECT id, writer, title, content, create_at, update_at
+        sql = '''SELECT id, writer, title, content, update_at
         FROM tb_board 
-        WHERE content LIKE %s'''
+        WHERE content LIKE %s
+        ORDER BY update_at DESC;'''
         _flag, result = db.query(sql, f'%{content}%')
 
         if _flag == False:
@@ -239,9 +244,10 @@ def get_board_in_title_and_content(contents):
             raise Exception('contents is empty')
         
         # 쿼리 작성
-        sql = '''SELECT id, writer, title, content, create_at, update_at
+        sql = '''SELECT id, writer, title, content, update_at
         FROM tb_board
-        WHERE title LIKE %s OR content LIKE %s'''
+        WHERE title LIKE %s OR content LIKE %s
+        ORDER BY update_at DESC;'''
         keyword = f'%{contents}%'
         _flag, result = db.query(sql, (keyword, keyword))
 

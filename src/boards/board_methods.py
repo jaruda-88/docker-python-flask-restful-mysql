@@ -61,9 +61,6 @@ base = {
                         "content": {
                             "type": "string"
                         },
-                        "create_at": {
-                            "type": "string"
-                        },
                         "update_at": {
                             "type": "string"
                         }
