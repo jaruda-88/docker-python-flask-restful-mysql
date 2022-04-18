@@ -9,7 +9,6 @@ import utils.database as database
 import pymysql
 from src.boards.board_methods import (
     writing,
-    delete_post,
     written_list,
     edit
     )
@@ -57,6 +56,7 @@ class Board(Resource):
             is_connected, conn = db.connector()
             
             if is_connected == False:
+                response['resultCode'] = HTTPStatus.NOT_FOUND
                 raise Exception(f"{conn[0]} : {conn[1]}")
 
             try:
@@ -91,7 +91,7 @@ class Board(Resource):
                 raise Exception(payload)
 
             # 쿼리 작성
-            sql = '''SELECT id, writer, title, content, update_at 
+            sql = '''SELECT id, writer, title, update_at 
             FROM tb_board 
             WHERE writer=%s'''
             _flag, result = db.query(sql, payload['userid'])

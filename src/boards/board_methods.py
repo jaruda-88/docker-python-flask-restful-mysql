@@ -49,6 +49,37 @@ base = {
                 },
                 "resultMsg": {
                     "properties": {
+                        "count": {
+                            "type": "integer"
+                        },
+                        "list": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "writer": {
+                                    "type": "string"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "update_at": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                    }
+                }
+            }
+        },
+        "ResponseBoardDetailInfo": {
+            "type": "object",
+            "properties": {
+                "resultCode": {
+                    "type": "integer"
+                },
+                "resultMsg": {
+                    "properties": {
                         "id": {
                             "type": "integer"
                         },
@@ -59,6 +90,9 @@ base = {
                             "type": "string"
                         },
                         "content": {
+                            "type": "string"
+                        },
+                        "create_at":{
                             "type": "string"
                         },
                         "update_at": {
@@ -161,6 +195,37 @@ written_all_list["parameters"].append(
         "type": "integer"
     }
 )
+written_list["responses"]["200"].clear()
+written_list["responses"]["200"] =\
+    {
+        "description": "Ok",
+        "schema": {
+            "$ref": "#/definitions/ResponseBoardDetailInfo"
+        }
+    }
+
+
+# 페이징 + 게시글 목록
+written_paging = copy.deepcopy(base)
+written_paging["summary"] = "GET boardinfos with page"
+written_paging["parameters"].append(
+    {
+        "name": "num",
+        "in": "path",
+        "required": True,
+        "description": "Number of paging",
+        "type": "integer"
+    }
+)
+written_paging["parameters"].append(
+    {
+        "name": "limit",
+        "in": "path",
+        "required": True,
+        "description": "limit of paging",
+        "type": "integer"
+    }
+)
 
 
 # 작성자 검색
@@ -169,10 +234,28 @@ get_board_in_writer["summary"] = "GET boardinfos in userid"
 get_board_in_writer["parameters"].append(
     {
         "name": "writer",
-        "in": "path",
+        "in": "query",
         "required": True,
         "description": "userid",
         "type": "string"
+    }
+)
+get_board_in_writer["parameters"].append(
+    {
+        "name": "num",
+        "in": "query",
+        "required": True,
+        "description": "Number of paging",
+        "type": "integer"
+    }
+)
+get_board_in_writer["parameters"].append(
+    {
+        "name": "limit",
+        "in": "query",
+        "required": True,
+        "description": "limit of paging",
+        "type": "integer"
     }
 )
 
@@ -182,10 +265,28 @@ get_board_in_title = copy.deepcopy(written_list)
 get_board_in_title["parameters"].append(
     {
         "name": "title",
-        "in": "path",
+        "in": "query",
         "required": True,
         "description": "title",
         "type": "string"
+    }
+)
+get_board_in_title["parameters"].append(
+    {
+        "name": "num",
+        "in": "query",
+        "required": True,
+        "description": "Number of paging",
+        "type": "integer"
+    }
+)
+get_board_in_title["parameters"].append(
+    {
+        "name": "limit",
+        "in": "query",
+        "required": True,
+        "description": "limit of paging",
+        "type": "integer"
     }
 )
 
@@ -196,23 +297,27 @@ get_board_in_content["summary"] = "GET boardinfos in content"
 get_board_in_content["parameters"].append(
     {
         "name": "content",
-        "in": "path",
+        "in": "query",
         "required": True,
         "description": "content",
         "type": "string"
     }
 )
-
-
-# 제목 + 내용 검색
-get_board_search = copy.deepcopy(written_list)
-get_board_search["summary"] = "GET boardinfos in title or content"
-get_board_search["parameters"].append(
+get_board_in_content["parameters"].append(
     {
-        "name": "contents",
-        "in": "path",
+        "name": "num",
+        "in": "query",
         "required": True,
-        "description": "title + content",
-        "type": "string"
+        "description": "Number of paging",
+        "type": "integer"
+    }
+)
+get_board_in_content["parameters"].append(
+    {
+        "name": "limit",
+        "in": "query",
+        "required": True,
+        "description": "limit of paging",
+        "type": "integer"
     }
 )

@@ -1,3 +1,4 @@
+import re
 import pymysql
 from utils.settings import DATABASE_CONFIG
 
@@ -72,3 +73,28 @@ class DBHandler:
                 return False, ME.args
         else:
             return is_connected, db    
+
+
+    def query_paging(self, query_list : str, query_count : str, value : tuple):
+        """ db connect query and count inclue"""
+        is_connected, db = self.connector()
+
+        if is_connected:
+            try:
+                with db.cursor(pymysql.cursors.DictCursor) as cursor:
+                    cursor.execute(query_list, value)
+                    list = cursor.fetchall()
+
+                    cursor.execute(query_count, value[0])
+                    count = cursor.fetchall()
+
+                    result = {'count': int(count[0]['COUNT(*)']), 'list' : list}
+
+                    cursor.close()
+                db.close()
+
+                return True, result
+            except pymysql.err.MySQLError as ME:
+                return False, ME.args
+        else:
+            return is_connected, db
