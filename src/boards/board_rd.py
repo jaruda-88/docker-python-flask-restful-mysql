@@ -1,11 +1,8 @@
-import http
 from flask import Blueprint
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 from http import HTTPStatus
 import utils.database as database
-import pymysql
-import sys
 from src.boards.board_methods import (
     delete_post,
     written_all_list,
@@ -136,36 +133,23 @@ def get_board_page(num, limit):
         pageLimit = int(limit)
 
         # 쿼리 작성
-        sql_list = '''SELECT id, writer, title, update_at
+        sql_list = ['''SELECT id, writer, title, update_at
         FROM tb_board
         ORDER BY update_at DESC
         LIMIT %s, %s;
-        '''
-        sql_count = '''SELECT COUNT(*) FROM tb_board;'''
-        
-        is_connected, conn = db.connector()
+        ''',
+        '''SELECT COUNT(id) AS count
+        FROM tb_board;''']
+        value_list = [((pageNum * pageLimit), pageLimit), '']
 
-        if is_connected == False:
-            response['resultCode'] = HTTPStatus.NOT_FOUND
-            raise Exception(f'{conn[0]} : {conn[1]}')
+        _flag, result = db.querys(query_list=sql_list, value_list=value_list)
 
-        try:
-            with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-                # limit 검색
-                cursor.execute(sql_list, ((pageNum * pageLimit), pageLimit))
-                list = cursor.fetchall()
-
-                # table count all
-                cursor.execute(sql_count)
-                count = cursor.fetchall()
-                
-                response['resultCode'] = HTTPStatus.OK
-                response['resultMsg'] = {'count': int(count[0]['COUNT(*)']), 'list' : list} 
-                cursor.close()
-            conn.close()
-        except pymysql.err.MySQLError as ME:
+        if _flag == False:
             response['resultCode'] = HTTPStatus.FORBIDDEN
-            raise Exception(f'{ME[0]} : {ME[1]}')
+            raise Exception(f'{result[0]} : {result[1]}')
+
+        response['resultCode'] = HTTPStatus.OK
+        response['resultMsg'] = {'list': result[0], 'count' : result[1]}
 
     except Exception as ex:
         response['resultMsg'] = ex.args[0]
@@ -188,42 +172,43 @@ def get_board_writer():
             raise Exception(payload)
 
         writer = f_request.args.get('writer')
-        pageNum = f_request.args.get('num')
-        pagelimit = f_request.args.get('limit')
+        num = f_request.args.get('num')
+        limit = f_request.args.get('limit')
 
         if is_blank_str(writer):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('writer is empty')
         
-        if not pageNum:
+        if is_blank_str(num):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('num is empty')
 
-        if not pagelimit:
+        if is_blank_str(limit):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('limit is empty')
+
+        pageNum = int(num)
+        pageLimit = int(limit)
         
         # 쿼리 작성
-        sql_list = '''SELECT id, writer, title, update_at
+        sql_list = ['''SELECT id, writer, title, update_at
         FROM tb_board
         WHERE writer=%s
         ORDER BY update_at DESC
-        LIMIT %s, %s;'''
-        sql_count = '''SELECT COUNT(*) FROM 
-        tb_board 
-        WHERE writer=%s;'''
-        _flag, result = db.query_paging(\
-            query_list=sql_list, 
-            query_count=sql_count, 
-            value=(writer, (int(pageNum)*int(pagelimit)), int(pagelimit))
-        )
+        LIMIT %s, %s;''',
+        '''SELECT COUNT(id) AS count
+        FROM tb_board
+        WHERE writer=%s;'''] 
+        value_list = [(writer, pageNum*pageLimit, pageLimit), writer]
+        # db 조회
+        _flag, result = db.querys(query_list=sql_list, value_list=value_list)
 
         if _flag == False:
             response['resultCode'] = HTTPStatus.NOT_FOUND
             raise Exception(f'{result[0]} : {result[1]}')
 
         response['resultCode'] = HTTPStatus.OK
-        response['resultMsg'] = result
+        response['resultMsg'] = {'list': result[0], 'count' : result[1]}
     
     except Exception as ex:
         response['resultMsg'] = ex.args[0]
@@ -246,42 +231,44 @@ def get_board_title():
             raise Exception(payload)
 
         title = f_request.args.get('title')
-        pageNum = f_request.args.get('num')
-        pagelimit = f_request.args.get('limit')
+        num = f_request.args.get('num')
+        limit = f_request.args.get('limit')
 
         if is_blank_str(title):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('writer is empty')
         
-        if not pageNum:
+        if is_blank_str(num):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('num is empty')
 
-        if not pagelimit:
+        if is_blank_str(limit):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('limit is empty')
+
+        pageNum = int(num)
+        pageLimit = int(limit)
+        searchKeywork = f'%{title}%'
         
         # 쿼리 작성
-        sql_list = '''SELECT id, writer, title, update_at
+        sql_list = ['''SELECT id, writer, title, update_at
         FROM tb_board
         WHERE title LIKE %s
         ORDER BY update_at DESC
-        LIMIT %s, %s;'''
-        sql_count = '''SELECT COUNT(*) FROM 
-        tb_board 
-        WHERE title LIKE %s;'''
-        _flag, result = db.query_paging(\
-            query_list=sql_list, 
-            query_count=sql_count, 
-            value=(f'%{title}%', (int(pageNum)*int(pagelimit)), int(pagelimit))
-        )
+        LIMIT %s, %s;''',
+        '''SELECT COUNT(id) AS count
+        FROM tb_board 
+        WHERE title LIKE %s;''']
+        value_list = [ (searchKeywork, pageNum*pageLimit, pageLimit), searchKeywork ]
+        # db 조회
+        _flag, result = db.querys(query_list=sql_list, value_list=value_list)
 
         if _flag == False:
             response['resultCode'] = HTTPStatus.NOT_FOUND
             raise Exception(f'{result[0]} : {result[1]}')
         
         response['resultCode'] = HTTPStatus.OK
-        response['resultMsg'] = result
+        response['resultMsg'] = {'list': result[0], 'count' : result[1]}
     
     except Exception as ex:
         response['resultMsg'] = ex.args[0]
@@ -304,42 +291,43 @@ def get_board_content():
             raise Exception(payload)
 
         content = f_request.args.get('content')
-        pageNum = f_request.args.get('num')
-        pagelimit = f_request.args.get('limit')
+        num = f_request.args.get('num')
+        limit = f_request.args.get('limit')
 
         if is_blank_str(content):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('writer is empty')
         
-        if not pageNum:
+        if is_blank_str(num):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('num is empty')
 
-        if not pagelimit:
+        if is_blank_str(limit):
             response['resultCode'] = HTTPStatus.NO_CONTENT
             raise Exception('limit is empty')
+
+        pageNum = int(num)
+        pageLimit = int(limit)
+        searchKeywork = f'%{content}%'
         
         # 쿼리 작성
-        sql_list = '''SELECT id, writer, title, update_at
+        sql_list = ['''SELECT id, writer, title, update_at
         FROM tb_board
         WHERE content LIKE %s
         ORDER BY update_at DESC
-        LIMIT %s, %s;'''
-        sql_count = '''SELECT COUNT(*) FROM 
-        tb_board 
-        WHERE content LIKE %s;'''
-        _flag, result = db.query_paging(\
-            query_list=sql_list, 
-            query_count=sql_count, 
-            value=(f'%{content}%', (int(pageNum)*int(pagelimit)), int(pagelimit))
-        )
+        LIMIT %s, %s;''',
+        '''SELECT COUNT(id) AS count 
+        FROM tb_board 
+        WHERE content LIKE %s;'''] 
+        value_list = [(searchKeywork, pageNum*pageLimit, pageLimit), searchKeywork]
+        _flag, result = db.querys(query_list=sql_list, value_list=value_list)
 
         if _flag == False:
             response['resultCode'] = HTTPStatus.NOT_FOUND
             raise Exception(f'{result[0]} : {result[1]}')
         
         response['resultCode'] = HTTPStatus.OK
-        response['resultMsg'] = result
+        response['resultMsg'] = {'list': result[0], 'count' : result[1]}
         
     except Exception as ex:
         response['resultMsg'] = ex.args[0]

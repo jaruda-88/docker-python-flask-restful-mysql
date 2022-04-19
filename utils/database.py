@@ -1,4 +1,4 @@
-import re
+from pickle import TRUE
 import pymysql
 from utils.settings import DATABASE_CONFIG
 
@@ -75,21 +75,29 @@ class DBHandler:
             return is_connected, db    
 
 
-    def query_paging(self, query_list : str, query_count : str, value : tuple):
-        """ db connect query and count inclue"""
+    def querys(self, query_list : list, value_list=None):
+        """ db connect query roop"""
         is_connected, db = self.connector()
 
         if is_connected:
             try:
+                result = []
                 with db.cursor(pymysql.cursors.DictCursor) as cursor:
-                    cursor.execute(query_list, value)
-                    list = cursor.fetchall()
-
-                    cursor.execute(query_count, value[0])
-                    count = cursor.fetchall()
-
-                    result = {'count': int(count[0]['COUNT(*)']), 'list' : list}
-
+                    query_count = len(query_list)
+                    for i in range(query_count):
+                        query = query_list[i]
+                        is_count = True if 'COUNT(id)' in query else False
+                        if type(value_list) is list:
+                            cursor.execute(query) if value_list[i] == '' else cursor.execute(query, value_list[i])
+                        elif value_list is None: 
+                            cursor.execute(query)
+                        else:
+                            cursor.execute(query, value_list)
+                        
+                        if is_count:
+                            result.append(cursor.fetchall()[0]['count'])
+                        else:
+                            result.append(cursor.fetchall())
                     cursor.close()
                 db.close()
 

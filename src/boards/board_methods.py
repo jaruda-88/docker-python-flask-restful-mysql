@@ -195,8 +195,8 @@ written_all_list["parameters"].append(
         "type": "integer"
     }
 )
-written_list["responses"]["200"].clear()
-written_list["responses"]["200"] =\
+written_all_list["responses"]["200"].clear()
+written_all_list["responses"]["200"] =\
     {
         "description": "Ok",
         "schema": {
@@ -262,6 +262,7 @@ get_board_in_writer["parameters"].append(
 
 # 제목 검색
 get_board_in_title = copy.deepcopy(written_list)
+get_board_in_title["summary"] = "GET boardinfos in title"
 get_board_in_title["parameters"].append(
     {
         "name": "title",
