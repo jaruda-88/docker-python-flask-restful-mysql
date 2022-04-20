@@ -1,0 +1,35 @@
+summary: board comment register
+consumes:
+    - application/json
+parameters:
+    - $ref: '#/components/parameters/TokenParam'
+    - in: body
+      name: comment
+      description: 'add comment'
+      schema:
+          $ref: '#/definitions/CommentInfo'
+responses:
+    200:
+        description: Ok
+        schema:
+            $ref: '#/components/schemas/DefaultResponse'
+    500:
+        description: Errors
+        schema:
+            $ref: '#/components/schemas/DefaultResponse'
+tags:
+    - comments
+definitions:
+    CommentInfo:
+        type: object
+        required:
+            - board_id
+            - writer
+            - content
+        properties:
+            board_id:
+                type: integer
+            writer:
+                type: string
+            content:
+                type: string

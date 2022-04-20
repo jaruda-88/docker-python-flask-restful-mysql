@@ -31,3 +31,15 @@ CREATE TABLE IF NOT EXISTS tb_board(
 )ENGINE=INNODB;
 
 ALTER TABLE tb_board COMMENT '게시판 테이블';
+
+CREATE TABLE IF NOT EXISTS tb_board_comment(
+    id INT NOT NULL AUTO_INCREMENT COMMENT 'PK',
+    board_id INT NOT NULL COMMENT 'board id',
+    writer VARCHAR(50) NOT NULL COMMENT '작성자',
+    content VARCHAR(100) NOT NULL COMMENT '내용',
+    create_at DATETIME NULL COMMENT '생성날짜',
+    PRIMARY KEY(id),
+    FOREIGN KEY(board_id) REFERENCES tb_board(id)
+)ENGINE=INNODB;
+
+ALTER TABLE tb_board_comment COMMENT '게시판 댓글 테이블';

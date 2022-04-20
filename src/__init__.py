@@ -9,6 +9,7 @@ api = Api(blueprint)
 from src.users.user import User
 from src.signin.login import Login
 from src.boards.board import Board
+from src.comments.comment import Comment
 
 # if BUILD['type'] != 'server':
 #     from src.todos.todo import Todo
@@ -18,3 +19,4 @@ from src.boards.board import Board
 api.add_resource(User, '/user')
 api.add_resource(Login, '/user/login')
 api.add_resource(Board, '/board')
+api.add_resource(Comment, '/board/comment')
