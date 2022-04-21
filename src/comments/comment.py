@@ -4,9 +4,9 @@ from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
 from utils.function import(
-    check_body_request,
     check_token,
-    get_dt_now_to_str
+    get_dt_now_to_str,
+    is_blank_str
 )
 
 db = database.DBHandler()
@@ -24,22 +24,28 @@ class Comment(Resource):
 
             rj = f_request.get_json()
 
-            response['resultCode'], response['resultMsg'] = check_body_request (rj, ('writer', 'content') )
+            userId = int(rj['user_id']) if rj['user_id'] else -100
+            if userId == -100:
+                response['resultCode'] = HTTPStatus.NO_CONTENT
+                raise Exception('user_id is empty')
 
             boardId = int(rj['board_id']) if rj['board_id'] else -100
             if boardId == -100:
                 response['resultCode'] = HTTPStatus.NO_CONTENT
                 raise Exception('board_id is empty')
-            
-            writer = rj['writer']
+
+            if is_blank_str(rj['content']):
+                response['resultCode'] = HTTPStatus.NO_CONTENT
+                raise Exception('conten is empty')
             content = rj['content']
+
             dt = get_dt_now_to_str()
 
             # 쿼리 작성
-            sql = '''INSERT INTO tb_board_comment (board_id, writer, content, create_at)
+            sql = '''INSERT INTO tb_board_comment (user_id, board_id, content, create_at)
             SELECT %s,%s,%s,%s;'''
             # db 조회
-            _flag, result = db.executer(sql, (boardId, writer, content, dt))
+            _flag, result = db.executer(sql, (userId, boardId, content, dt))
 
             # db 조회 실패
             if _flag == False:

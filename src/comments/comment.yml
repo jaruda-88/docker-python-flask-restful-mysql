@@ -23,13 +23,13 @@ definitions:
     CommentInfo:
         type: object
         required:
+            - user_id
             - board_id
-            - writer
             - content
         properties:
+            user_id:
+                type: integer
             board_id:
                 type: integer
-            writer:
-                type: string
             content:
                 type: string

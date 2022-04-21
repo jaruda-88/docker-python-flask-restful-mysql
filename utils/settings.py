@@ -80,7 +80,8 @@ SWAGGER_TEMPLATE = {
                 "description": "Authorization header using JWT token",  
                 "type": "token",
                 "name": "Authorization",
-                "in": "header"
+                "in": "header",
+                "required" : True
             }
         }
     }

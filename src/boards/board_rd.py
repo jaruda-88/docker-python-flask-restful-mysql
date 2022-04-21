@@ -84,11 +84,21 @@ def get_board_in_id(id):
 
         # 쿼리 작성
         if int(id) == -1:
-            sql = '''SELECT id, writer, title, content, create_at, update_at
+            sql = '''SELECT id, writer, title, content, create_at, update_at,
+            (
+                SELECT COUNT(id)
+                FROM tb_board_comment 
+                WHERE tb_board.id=tb_board_comment.board_id
+            ) AS comment_count
             FROM tb_board
             ORDER BY update_at DESC;'''
         else:
-            sql = f'''SELECT id, writer, title, content, create_at, update_at 
+            sql = f'''SELECT id, writer, title, content, create_at, update_at,
+            (
+                SELECT COUNT(id)
+                FROM tb_board_comment 
+                WHERE tb_board.id=tb_board_comment.board_id
+            ) AS comment_count 
             FROM tb_board
             WHERE id={int(id)}
             ORDER BY update_at DESC;'''

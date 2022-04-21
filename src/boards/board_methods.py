@@ -97,6 +97,9 @@ base = {
                         },
                         "update_at": {
                             "type": "string"
+                        },
+                        "comment_count": {
+                            "type": "integer"
                         }
                     }
                 }
@@ -222,14 +225,14 @@ written_paging["parameters"].append(
         "name": "limit",
         "in": "path",
         "required": True,
-        "description": "limit of paging",
+        "description": "Limit of paging",
         "type": "integer"
     }
 )
 
 
 # 작성자 검색
-get_board_in_writer = copy.deepcopy(written_list)
+get_board_in_writer = copy.deepcopy(written_paging)
 get_board_in_writer["summary"] = "GET boardinfos in userid"
 get_board_in_writer["parameters"].append(
     {
@@ -240,28 +243,10 @@ get_board_in_writer["parameters"].append(
         "type": "string"
     }
 )
-get_board_in_writer["parameters"].append(
-    {
-        "name": "num",
-        "in": "query",
-        "required": True,
-        "description": "Number of paging",
-        "type": "integer"
-    }
-)
-get_board_in_writer["parameters"].append(
-    {
-        "name": "limit",
-        "in": "query",
-        "required": True,
-        "description": "limit of paging",
-        "type": "integer"
-    }
-)
 
 
 # 제목 검색
-get_board_in_title = copy.deepcopy(written_list)
+get_board_in_title = copy.deepcopy(written_paging)
 get_board_in_title["summary"] = "GET boardinfos in title"
 get_board_in_title["parameters"].append(
     {
@@ -272,28 +257,10 @@ get_board_in_title["parameters"].append(
         "type": "string"
     }
 )
-get_board_in_title["parameters"].append(
-    {
-        "name": "num",
-        "in": "query",
-        "required": True,
-        "description": "Number of paging",
-        "type": "integer"
-    }
-)
-get_board_in_title["parameters"].append(
-    {
-        "name": "limit",
-        "in": "query",
-        "required": True,
-        "description": "limit of paging",
-        "type": "integer"
-    }
-)
 
 
 # 내용 검색
-get_board_in_content = copy.deepcopy(written_list)
+get_board_in_content = copy.deepcopy(written_paging)
 get_board_in_content["summary"] = "GET boardinfos in content"
 get_board_in_content["parameters"].append(
     {
@@ -302,23 +269,5 @@ get_board_in_content["parameters"].append(
         "required": True,
         "description": "content",
         "type": "string"
-    }
-)
-get_board_in_content["parameters"].append(
-    {
-        "name": "num",
-        "in": "query",
-        "required": True,
-        "description": "Number of paging",
-        "type": "integer"
-    }
-)
-get_board_in_content["parameters"].append(
-    {
-        "name": "limit",
-        "in": "query",
-        "required": True,
-        "description": "limit of paging",
-        "type": "integer"
     }
 )

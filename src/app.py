@@ -5,10 +5,12 @@ def register_blueprints(app):
     from src import blueprint
     from src.users.user_search import bp as UserSearch
     from src.boards.board_rd import bp as BoardRD
+    from src.comments.comment_rd import bp as CommentRd
 
     app.register_blueprint(blueprint, url_prefix="/api")
     app.register_blueprint(UserSearch)
     app.register_blueprint(BoardRD)
+    app.register_blueprint(CommentRd)
 
 
 def create_swagger(app):
