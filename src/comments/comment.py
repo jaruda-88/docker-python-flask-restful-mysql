@@ -9,7 +9,9 @@ from utils.function import(
     is_blank_str
 )
 
+
 db = database.DBHandler()
+
 
 class Comment(Resource):
     @swag_from('comment.yml', validation=True)
