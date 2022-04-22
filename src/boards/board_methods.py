@@ -65,6 +65,9 @@ base = {
                                 },
                                 "update_at": {
                                     "type": "string"
+                                },
+                                "comment_count": {
+                                    "type": "integer"
                                 }
                             }
                         },
@@ -97,9 +100,6 @@ base = {
                         },
                         "update_at": {
                             "type": "string"
-                        },
-                        "comment_count": {
-                            "type": "integer"
                         }
                     }
                 }
@@ -229,11 +229,21 @@ written_paging["parameters"].append(
         "type": "integer"
     }
 )
+written_paging["responses"]["200"].clear()
+written_paging["responses"]["200"] =\
+    {
+        "description": "Ok",
+        "schema": {
+            "$ref": "#/definitions/ResponseBoardInfo"
+        }
+    }
 
 
 # 작성자 검색
 get_board_in_writer = copy.deepcopy(written_paging)
 get_board_in_writer["summary"] = "GET boardinfos in userid"
+get_board_in_writer["parameters"][1]["in"] = "query"
+get_board_in_writer["parameters"][2]["in"] = "query"
 get_board_in_writer["parameters"].append(
     {
         "name": "writer",
@@ -248,6 +258,8 @@ get_board_in_writer["parameters"].append(
 # 제목 검색
 get_board_in_title = copy.deepcopy(written_paging)
 get_board_in_title["summary"] = "GET boardinfos in title"
+get_board_in_title["parameters"][1]["in"] = "query"
+get_board_in_title["parameters"][2]["in"] = "query"
 get_board_in_title["parameters"].append(
     {
         "name": "title",
@@ -262,6 +274,8 @@ get_board_in_title["parameters"].append(
 # 내용 검색
 get_board_in_content = copy.deepcopy(written_paging)
 get_board_in_content["summary"] = "GET boardinfos in content"
+get_board_in_content["parameters"][1]["in"] = "query"
+get_board_in_content["parameters"][2]["in"] = "query"
 get_board_in_content["parameters"].append(
     {
         "name": "content",

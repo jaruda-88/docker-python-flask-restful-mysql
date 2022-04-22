@@ -84,21 +84,11 @@ def get_board_in_id(id):
 
         # 쿼리 작성
         if int(id) == -1:
-            sql = '''SELECT id, writer, title, content, create_at, update_at,
-            (
-                SELECT COUNT(id)
-                FROM tb_board_comment 
-                WHERE tb_board.id=tb_board_comment.board_id
-            ) AS comment_count
+            sql = '''SELECT id, writer, title, content, create_at, update_at
             FROM tb_board
             ORDER BY update_at DESC;'''
         else:
-            sql = f'''SELECT id, writer, title, content, create_at, update_at,
-            (
-                SELECT COUNT(id)
-                FROM tb_board_comment 
-                WHERE tb_board.id=tb_board_comment.board_id
-            ) AS comment_count 
+            sql = f'''SELECT id, writer, title, content, create_at, update_at            
             FROM tb_board
             WHERE id={int(id)}
             ORDER BY update_at DESC;'''
@@ -143,9 +133,12 @@ def get_board_page(num, limit):
         pageLimit = int(limit)
 
         # 쿼리 작성
-        sql_list = ['''SELECT id, writer, title, update_at
-        FROM tb_board
-        ORDER BY update_at DESC
+        sql_list = ['''SELECT post.id, post.writer, post.title, post.update_at, COUNT(comment.id) as comment_count
+        FROM tb_board post
+            LEFT OUTER JOIN tb_board_comment comment
+            ON post.id=comment.board_id
+        GROUP BY post.id
+        ORDER BY post.update_at DESC
         LIMIT %s, %s;
         ''',
         '''SELECT COUNT(id) AS count
@@ -201,10 +194,13 @@ def get_board_writer():
         pageLimit = int(limit)
         
         # 쿼리 작성
-        sql_list = ['''SELECT id, writer, title, update_at
-        FROM tb_board
-        WHERE writer=%s
-        ORDER BY update_at DESC
+        sql_list = ['''SELECT post.id, post.writer, post.title, post.update_at, COUNT(comment.id) as comment_count
+        FROM tb_board as post
+            LEFT OUTER JOIN tb_board_comment comment
+            ON post.id=comment.board_id
+        WHERE post.writer=%s
+        GROUP BY post.id
+        ORDER BY post.update_at DESC
         LIMIT %s, %s;''',
         '''SELECT COUNT(id) AS count
         FROM tb_board
@@ -261,10 +257,13 @@ def get_board_title():
         searchKeywork = f'%{title}%'
         
         # 쿼리 작성
-        sql_list = ['''SELECT id, writer, title, update_at
-        FROM tb_board
-        WHERE title LIKE %s
-        ORDER BY update_at DESC
+        sql_list = ['''SELECT post.id, post.writer, post.title, post.update_at, COUNT(comment.id) AS comment_count
+        FROM tb_board post
+            LEFT OUTER JOIN tb_board_comment comment
+            ON post.id=comment.board_id
+        WHERE post.title LIKE %s
+        GROUP BY post.id
+        ORDER BY post.update_at DESC
         LIMIT %s, %s;''',
         '''SELECT COUNT(id) AS count
         FROM tb_board 
@@ -321,10 +320,13 @@ def get_board_content():
         searchKeywork = f'%{content}%'
         
         # 쿼리 작성
-        sql_list = ['''SELECT id, writer, title, update_at
-        FROM tb_board
-        WHERE content LIKE %s
-        ORDER BY update_at DESC
+        sql_list = ['''SELECT post.id, post.writer, post.title, post.update_at, COUNT(comment.id) as comment_count
+        FROM tb_board post
+            LEFT OUTER JOIN tb_board_comment comment
+            ON post.id=comment.board_id
+        WHERE post.content LIKE %s
+        GROUP BY post.id
+        ORDER BY post.update_at DESC
         LIMIT %s, %s;''',
         '''SELECT COUNT(id) AS count 
         FROM tb_board 

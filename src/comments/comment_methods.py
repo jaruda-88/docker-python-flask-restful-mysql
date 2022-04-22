@@ -32,17 +32,27 @@ base = {
                 },
                 "resultMsg": {
                     "properties": {
-                        "id": {
+                        "count": {
                             "type": "integer"
                         },
-                        "user_id": {
-                            "type": "integer"
-                        },
-                        "writer": {
-                            "type": "string"
-                        },
-                        "create_at": {
-                            "type": "string"
+                        "list": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "user_id": {
+                                    "type": "integer"
+                                },                            
+                                "create_at": {
+                                    "type": "string"
+                                },
+                                "user_id":{
+                                    "type": "integer"
+                                },
+                                "writer": {
+                                    "type": "string"
+                                },
+                            }
                         }
                     }
                 }
@@ -74,7 +84,7 @@ comment_paging["parameters"].append(
 )
 comment_paging["parameters"].append(
     {
-        "name": "board id",
+        "name": "board_id",
         "in": "query",
         "required": True,
         "description": "board id(pk)",

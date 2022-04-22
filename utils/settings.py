@@ -81,7 +81,6 @@ SWAGGER_TEMPLATE = {
                 "type": "token",
                 "name": "Authorization",
                 "in": "header",
-                "required" : True
             }
         }
     }

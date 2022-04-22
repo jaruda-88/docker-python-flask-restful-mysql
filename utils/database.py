@@ -86,7 +86,7 @@ class DBHandler:
                     query_count = len(query_list)
                     for i in range(query_count):
                         query = query_list[i]
-                        is_count = True if 'COUNT(id)' in query else False
+                        is_count = True if 'COUNT(id) AS count' in query else False
                         if type(value_list) is list:
                             cursor.execute(query) if value_list[i] == '' else cursor.execute(query, value_list[i])
                         elif value_list is None: 
