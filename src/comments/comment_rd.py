@@ -18,7 +18,7 @@ db = database.DBHandler()
 @bp.route('/page', methods=['GET'])
 @swag_from(comment_paging, methods=['GET'])
 def get_board_comment_in_id():
-    response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
+    response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR }
 
     try:
         #토큰 확인

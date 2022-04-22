@@ -166,7 +166,7 @@ def get_board_page(num, limit):
 @bp.route('/writer', methods=['GET'])
 @swag_from(get_board_in_writer, methods=['GET'])
 def get_board_writer():
-    response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
+    response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR }
     
     try:
         # 토큰 확인
@@ -228,7 +228,7 @@ def get_board_writer():
 @bp.route('/title', methods=['GET'])
 @swag_from(get_board_in_title, methods=['GET'])
 def get_board_title():
-    response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
+    response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR }
 
     try:
         # 토큰 확인
@@ -291,7 +291,7 @@ def get_board_title():
 @bp.route('/content', methods=['GET'])
 @swag_from(get_board_in_content, methods=['GET'])
 def get_board_content():
-    response = { 'resultCode' : HTTPStatus.INTERNAL_SERVER_ERROR, 'resultMsg' : '' }
+    response = { 'resultCode' : HTTPStatus.INTERNAL_SERVER_ERROR }
 
     try:
         # 토큰 확인
