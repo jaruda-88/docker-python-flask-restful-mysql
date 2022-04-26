@@ -60,6 +60,27 @@ def check_token(headers):
         return HTTPStatus.INTERNAL_SERVER_ERROR, ex.args[0]
 
 
+def is_token(headers):
+    ''' jwt 복호화 후 token의 payload return '''
+    try:
+        auth = headers.get('Authorization')
+
+        if auth is None:
+            raise Exception("None token")
+
+        try:
+            payload = jwt.decode(auth, 'project1', algorithms=['HS256'])
+        # token 유효시간 만료 에러
+        except jwt.ExpiredSignatureError:
+            raise Exception("Token Expiration")
+        except jwt.InvalidTokenError:
+            raise Exception("Token value error")
+        else:
+            return payload
+    except Exception as ex:
+        raise Exception(ex.args[0])
+
+
 def is_blank_str(string : str):
     """ 문자열 공백 체크 공백이면 True 아니면 False """
     return not (string and string.strip())

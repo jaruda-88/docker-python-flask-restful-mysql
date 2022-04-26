@@ -6,11 +6,12 @@ RUN apt-get update
 RUN apt-get install -y
 RUN pip3 install --upgrade pip
 RUN pip install -r requirements.txt
-RUN pip install PyMySQL
 RUN pip install flasgger
 RUN pip install cryptography
 RUN pip install flask_cors
 RUN pip install pyjwt
+RUN pip install PyMySQL
+RUN pip install mysql-connector-python
 
 WORKDIR /app
 

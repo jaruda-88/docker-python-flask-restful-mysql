@@ -3,133 +3,136 @@ from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
 import utils.database as database
+import utils.database2
 from src.users.user_methods import (
     userinfo, 
     registration,
     edit,
 )
 from utils.function import (
+    is_token,
     check_token, 
     get_password_sha256_hash, 
     get_dt_now_to_str,
-    check_body_request
+    check_body_request,
+    is_blank_str
 )
+from utils.settings import DATABASE_CONFIG as con
 
 
-db = database.DBHandler()
+#db = database.DBHandler()
+db2 = utils.database2.DBHandler(host=con['HOST'], user=con['USER'], pw=con['PASSWORD'], database=con['DB'])
 
 
 class User(Resource):
     @swag_from(registration)
     def post(self):
-        response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg" : 'Ok' }
+        response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR }
 
         try:
             rj = f_request.get_json()
 
-            # request data 확인
-            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('userid', 'pw') )
-            if response['resultCode'] != HTTPStatus.OK:
-                raise Exception(response['resultMsg'])
-
             userid = rj['userid']
-            usernm = rj['username'] if rj['username'] else ''
             pw = rj['pw']
+            usernm = rj['username']
+
+            if is_blank_str(userid):
+                response["resultCode"] = HTTPStatus.NO_CONTENT
+                raise Exception('userid is empty')
+
+            if is_blank_str(pw):
+                response["resultCode"] = HTTPStatus.NO_CONTENT
+                raise Exception('pw is empty')
 
             # 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
 
             dt = get_dt_now_to_str()
 
-            # 쿼리 작성, 유니크 설정하지않고 userid 중복 체크
-            _flag, result = db.executer('''INSERT INTO tb_user (userid, username, pw, create_at, update_at) 
-            SELECT %s,%s,%s,%s,%s
-            FROM 
-            DUAL WHERE NOT EXISTS(SELECT userid FROM tb_user WHERE userid=%s);''', 
-            (userid, usernm, pw_hash, dt, dt, userid))
+            # 쿼리 작성
+            try:    
+                # 유니크 설정하지않고 userid 중복 체크
+                sql = '''INSERT INTO tb_user (userid, username, pw, create_at, update_at) 
+                SELECT %s,%s,%s,%s,%s
+                FROM 
+                DUAL WHERE NOT EXISTS(SELECT userid FROM tb_user WHERE userid=%s);'''
+                value = (userid, usernm, pw_hash, dt, dt, userid)
+                # db 조회
+                result = db2.executer(sql=sql, value=value, last_id=True)
 
-            # db 조회 실패
-            if _flag == False:
-                response["resultCode"] = HTTPStatus.NOT_FOUND
-                raise Exception(f"{result[0]} : {result[1]}")
-            
-            # insert 성공 시 1
-            # insert 실패 시 0
-            if type(result) is int and bool(result) == False: 
-                response["resultCode"] = HTTPStatus.FORBIDDEN
-                raise Exception('userid already registered')
-
-            response["resultCode"] = HTTPStatus.OK
-            response["resultMsg"] = 'Ok'
+                # insert 실패
+                if result == 0:
+                    raise Exception('already exist account')
+            except Exception as ex:
+                raise Exception(ex.args[0])
+            else:
+                response["resultCode"] = HTTPStatus.OK
+                response["resultMsg"] = result
+                return jsonify(response)
             
         except Exception as ex:
             response["resultMsg"] = ex.args[0]
-
-        if response["resultCode"] == HTTPStatus.OK:
-            return jsonify(response)
-        else:
             return response, HTTPStatus.INTERNAL_SERVER_ERROR
+            
 
             
     @swag_from(userinfo)
     def get(self):
-        response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg" : '' }
+        response = { "resultCode" : HTTPStatus.INTERNAL_SERVER_ERROR }
 
         try:
             # 토큰 화인
-            response['resultCode'], payload = check_token(f_request.headers)
-            if response['resultCode'] != HTTPStatus.OK:
-                raise Exception(payload)
-
-            # 쿼리 작성
-            sql = '''SELECT id, userid, username, connected_at 
-            FROM tb_user 
-            WHERE activate=1 AND userid=%s;'''
-            _flag, result = db.query(sql, payload['userid'])
-
-            # db 조회 실패
-            if _flag == False:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception(f"{result[0]} : {result[1]}")
+            try:
+                payload = is_token(f_request.headers)
+            except Exception as ex:
+                response['resultCode'] = HTTPStatus.UNAUTHORIZED
+                raise Exception(ex.args[0])
             
-            # SELECT 실패
-            if _flag and result is None or len(result) <= 0:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception("not user data")
-
-            response["resultCode"] = HTTPStatus.OK
-            response["resultMsg"] = result[0]
+            # 쿼리 작성
+            try:
+                sql = '''SELECT id, userid, username, connected_at
+                FROM tb_user
+                WHERE activate=%s AND userid=%s'''
+                # db 조회
+                result = db2.query(sql=sql, value=(1, payload['userid']), all=False)
+            except Exception as ex:
+                raise Exception(ex.args[0])
+            else:
+                response["resultCode"] = HTTPStatus.OK
+                response["resultMsg"] = result
+                return jsonify(response)
                 
         except Exception as ex:
             response["resultMsg"] = ex.args[0]
-
-        if response["resultCode"] == HTTPStatus.OK:
-            return jsonify(response)
-        else:
             return response, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
     @swag_from(edit)
     def put(self):
-        response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR, "resultMsg": '' }
+        response = { "resultCode": HTTPStatus.INTERNAL_SERVER_ERROR }
         
         try:
-            # 토큰 확인
-            response['resultCode'], payload = check_token(f_request.headers)
-            if response['resultCode'] != HTTPStatus.OK:
-                raise Exception(payload)
+            # 토큰 화인
+            try:
+                payload = is_token(f_request.headers)
+            except Exception as ex:
+                response['resultCode'] = HTTPStatus.UNAUTHORIZED
+                raise Exception(ex.args[0])
 
             rj = f_request.get_json()
 
-            # request data 확인
-            response['resultCode'], response['resultMsg'] = check_body_request( rj, ('id', 'userid', 'pw') )
-            if response['resultCode'] != HTTPStatus.OK:
-                raise Exception(response['resultMsg'])
-
             id = rj['id']
             userid = rj['userid']
-            username = rj['username'] if rj['username'] else ''
+            username = rj['username']
             pw = rj['pw']
+
+            if is_blank_str(userid):
+                response["resultCode"] = HTTPStatus.NO_CONTENT
+                raise Exception('userid is empty')
+
+            if is_blank_str(pw):
+                response["resultCode"] = HTTPStatus.NO_CONTENT
+                raise Exception('pw is empty')
 
             # 비밀번호 암호화
             pw_hash = get_password_sha256_hash(pw)
@@ -137,31 +140,31 @@ class User(Resource):
             dt = get_dt_now_to_str()
 
             # 쿼리 작성
-            sql ='''UPDATE tb_user 
-            SET userid=%s, username=%s, pw=%s, update_at=%s 
-            WHERE id=%s AND NOT pw=%s;'''
-            _flag, result = db.executer(sql, (userid, username, pw_hash, dt, int(id), pw_hash))
+            try:
+                if payload['userid'] == userid:
+                    sql ='''UPDATE tb_user 
+                    SET username=%s, pw=%s, update_at=%s 
+                    WHERE id=%s;'''
+                    value = (username, pw_hash, dt, int(id))
+                else:
+                    sql ='''UPDATE tb_user 
+                    SET userid=%s, username=%s, pw=%s, update_at=%s 
+                    WHERE NOT userid=%s AND id=%s;'''
+                    value = (userid, username, pw_hash, dt, userid, int(id))
+                # db 조회
+                result = db2.executer(sql=sql, value=value)
 
-            # db 조회 실패
-            if _flag == False:
-                response['resultCode'] = HTTPStatus.NOT_FOUND
-                raise Exception(f'{result[0]} : {result[1]}')
-
-            # UPDATE 실패
-            if _flag and bool(result) == False:
-                response['resultCode'] = HTTPStatus.FORBIDDEN
-                raise Exception('Password is the same as before')
-            
-            response["resultCode"] = HTTPStatus.OK
-            response['resultMsg'] = "Ok"
+                # UPDATE 실패
+                if result == 0:
+                    response['resultCode'] = HTTPStatus.FORBIDDEN
+                    raise Exception('already userid')
+            except Exception as ex:
+                raise Exception(ex.args[0])
+            else:
+                response["resultCode"] = HTTPStatus.OK
+                response['resultMsg'] = "Ok"
+                return jsonify(response)
 
         except Exception as ex:
             response['resultMsg'] = ex.args[0]
-
-        if response['resultCode'] == HTTPStatus.OK:
-            return jsonify(response)
-        else:
             return response, HTTPStatus.INTERNAL_SERVER_ERROR
-
-
-    
