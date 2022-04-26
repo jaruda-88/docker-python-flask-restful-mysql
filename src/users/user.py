@@ -149,7 +149,7 @@ class User(Resource):
                 else:
                     sql ='''UPDATE tb_user 
                     SET userid=%s, username=%s, pw=%s, update_at=%s 
-                    WHERE NOT userid=%s AND id=%s;'''
+                    WHERE id=%s;'''
                     value = (userid, username, pw_hash, dt, userid, int(id))
                 # db 조회
                 result = db2.executer(sql=sql, value=value)
