@@ -1,7 +1,4 @@
 from http import HTTPStatus
-from math import fabs
-from unittest import result
-from urllib import response
 from flask import jsonify, request as f_request
 from flask_restful import Resource
 from flasgger import Swagger, swag_from

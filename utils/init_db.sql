@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS tb_board_comment(
     create_at DATETIME NULL COMMENT '생성날짜',
     PRIMARY KEY(id),
     FOREIGN KEY(user_id) REFERENCES tb_user(id),
-    FOREIGN KEY(board_id) REFERENCES tb_board(id)
+    FOREIGN KEY(board_id) REFERENCES tb_board(id) ON DELETE CASCADE
 )ENGINE=INNODB;
 
 ALTER TABLE tb_board_comment COMMENT '게시판 댓글 테이블';

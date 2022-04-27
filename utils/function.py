@@ -61,11 +61,14 @@ def check_token(headers):
 
 
 def is_token(headers):
-    ''' jwt 복호화 후 token의 payload return '''
+    ''' jwt token chech\n
+    param -> headers = request.headers\n
+    error -> raise Exception(error message)\n
+    return decode token'''
     try:
         auth = headers.get('Authorization')
 
-        if auth is None:
+        if not auth:
             raise Exception("None token")
 
         try:
@@ -82,7 +85,9 @@ def is_token(headers):
 
 
 def is_blank_str(string : str):
-    """ 문자열 공백 체크 공백이면 True 아니면 False """
+    """ 문자열 공백 체크\n
+    param -> string = text\n
+    return True(empty or None)/False(in value) """
     return not (string and string.strip())
 
 

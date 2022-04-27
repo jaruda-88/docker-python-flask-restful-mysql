@@ -1,5 +1,7 @@
 from flask import Flask
 
+from utils.settings import BuildType
+
 
 def register_blueprints(app):
     from src import blueprint
@@ -69,13 +71,13 @@ def init_db():
 
 def create_app():
     from flask_cors import CORS
-    from utils.settings import BUILD        
+    from utils.settings import BUILD_TYPE        
 
     app = Flask(__name__)
 
     CORS(app)
 
-    if BUILD['type'] != 'server':
+    if BUILD_TYPE != BuildType.SERVER:
         init_db()
 
     register_blueprints(app)    

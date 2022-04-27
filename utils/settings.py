@@ -1,33 +1,43 @@
 # settings
+from enum import Enum
 
 
-BUILD = { 
-    'type' : 'server',
-    'db_host' : { 
-        "server" : 'mydatabase.cvc2dcwg4ut0.ap-northeast-2.rds.amazonaws.com', 
-        'local' : '3.38.135.214', 
-        'develop' : '192.168.1.69' 
-        },
-    'db_user' : { 
-        "server" : 'jaruda', 
-        'local' : 'root', 
-        'develop' : 'root' 
-        },
-    'db_pw' : { 
-        "server" : 'Jkk100458', 
-        'local' : 'password', 
-        'develop' : 'password' 
-        }
- }
+class BuildType(Enum):
+    SERVER = 1
+    LOCAL = 2
+    DEVELOP = 3
+    NONE = 4
+
+
+BUILD_TYPE = BuildType.SERVER
 
 
 DATABASE_CONFIG = {
-    'HOST' : BUILD['db_host'].get(BUILD['type'], 'None'),
-    'USER' : BUILD['db_user'].get(BUILD['type'], 'None'),
-    'PASSWORD' : BUILD['db_pw'].get(BUILD['type'], 'None'),
-    'DB' : 'project1',
-    'PORT' : 3306,
-}
+    # AWS RDS
+    BuildType.SERVER : {
+        'db_name': 'project1',
+        'port': 3306,
+        'host': 'mydatabase.cvc2dcwg4ut0.ap-northeast-2.rds.amazonaws.com',
+        'user': 'jaruda',
+        'pw': 'Jkk100458'
+    },
+    # AWS EC2 Docker
+    BuildType.LOCAL : {
+        'db_name': 'project1',
+        'port': 3306,
+        'host': '3.38.135.214',
+        'user': 'root',
+        'pw': 'password'
+    },
+    # test
+    BuildType.DEVELOP : {
+        'db_name': 'project1',
+        'port': 3306,
+        'host': '192.168.1.69',
+        'user': 'root',
+        'pw': 'password'
+    },
+}.get(BUILD_TYPE, BuildType.NONE)
 
 
 SWAGGER_CONFIG = {

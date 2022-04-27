@@ -13,11 +13,11 @@ class DBHandler:
         """ db connector """
         try:
             db = pymysql.connect(  
-                    host=self.config['HOST'], 
-                    port=self.config['PORT'], 
-                    user=self.config['USER'], 
-                    password=self.config['PASSWORD'], 
-                    database=self.config['DB'], 
+                    host=self.config['host'], 
+                    port=self.config['port'], 
+                    user=self.config['user'], 
+                    password=self.config['pw'], 
+                    database=self.config['db_name'], 
                     charset='utf8' 
                 )
             return True, db 

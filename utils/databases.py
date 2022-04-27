@@ -4,6 +4,7 @@ from mysql.connector import errorcode
 
 class DBHandler():
     def __init__(self, user:str, pw:str, host:str, database:str, port=3306, raise_on_warnings=True, use_pure=False):
+        ''' init create config '''
         self.config = {
             'user': user,
             'password': pw,
@@ -16,6 +17,7 @@ class DBHandler():
         
     
     def change_config(self, user='', pw='', host='', database='', port=3306, raise_on_warnings=True, use_pure=False):
+        ''' config edit '''
         if user != '':
             self.config['user'] = user
 
@@ -34,6 +36,9 @@ class DBHandler():
 
 
     def connector(self):
+        ''' mysql connector\n
+        error -> raise Exception(error message)
+        return db connector obj'''
         try: 
             conn = mysql.connector.connect(**self.config)
         except mysql.connector.Error as err:
@@ -50,6 +55,13 @@ class DBHandler():
 
 
     def query(self, sql, value=None, all=True, dict=True):
+        ''' mysql SELECT\n
+        param -> sql = sql\n 
+        param -> value = Condition, type(tuple)\n
+        param -> all = True(fetchall)/False(fetchone)\n
+        param -> dict = True(dictionary result)/False(result)\n
+        error -> raise Exception(error message)\n
+        return result query'''
         try:
             conn = self.connector()
             with conn.cursor(dictionary=dict) as cursor:
@@ -69,24 +81,47 @@ class DBHandler():
             return result  
 
 
-    def querys(self, sql_list, value_list, all=True, dict=True):
+    def querys(self, datas:list, dict=True):
+        ''' mysql curd\n
+        param -> datas = [
+                {
+                    'sql': 'SELECT * FROM tb;',
+                    'value': None,
+                    'op': {'type': 'query', 'all': True}
+                },
+                {
+                    'sql': 'UPDATE tb SET value1=%s value2=%s',
+                    'value': ('test', 'test'),
+                    'op': {'type': 'executer', 'last_id': False}
+                }
+            ]\n
+        error -> raise Exception(error message)\n
+        return Result query list of input array order
+        '''
         try:
-            conn = self.connector()
+            conn = self.connector()            
             with conn.cursor(dictionary=dict) as cursor:
                 result = []
-                for i in range(len(sql_list)):
-                    if value_list[i] == '':
-                        cursor.execute(sql_list[i])
+                for data in datas:
+                    option = data['op']
+                    sql = data['sql']
+                    value = data['value']
+                    type = option['type']
+                    if type == 'query':
+                        all = option['all']
+                        cursor.execute(sql, value) if value else cursor.execute(sql)
+                        result.append(cursor.fetchall() if all else cursor.fetchone())
+                    elif type == 'executer':
+                        last_id = option['last_id']
+                        cursor.execute(sql, value) if value else cursor.execute(sql)
+                        if last_id:
+                            result.append(cursor.lastrowid) 
+                        conn.commit()
+                        if last_id == False:
+                            result.append(cursor.rowcount)
                     else:
-                        cursor.execute(sql_list[i], value_list[i])
-
-                    if all:
-                        result.append(cursor.fetchall())
-                    else:
-                        result.append(cursor.fetchone())
+                        raise Exception('datas:op:type error')
         except mysql.connector.Error as err:
-            # error_code = err.errno
-            # sql_state = err.sqlstate
             raise Exception(err.msg)
         except Exception as ex:
             raise Exception(ex.args[0])
@@ -97,6 +132,13 @@ class DBHandler():
 
     
     def executer(self, sql, value=None, last_id=False, dict=True):
+        ''' mysql cud\n
+        param -> sql = sql\n 
+        param -> value = Condition, type(tuple)\n
+        param -> last_id - True(lastrowid)/False(rowcount)\n
+        param -> dict - True(dictionary result)/False(result)\n
+        error -> raise Exception(error message)\n
+        return execute success(0↑)/fail(0)'''
         try:
             conn = self.connector()
             with conn.cursor(dictionary=dict) as cursor:
