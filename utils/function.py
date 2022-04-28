@@ -2,7 +2,6 @@ import datetime
 from pytz import timezone
 import jwt
 import hashlib
-from http import HTTPStatus
 
 
 def get_dt_now(tz):
@@ -42,24 +41,6 @@ def decode_token(token):
         return None
 
 
-def check_token(headers):
-    ''' jwt 복호화 후 token의 payload return '''
-    try:
-        auth = headers.get('Authorization')
-
-        if auth is None:
-            return HTTPStatus.NON_AUTHORITATIVE_INFORMATION, "None token"
-
-        payload = decode_token(auth)
-
-        if payload is None:
-            return HTTPStatus.UNAUTHORIZED, "Token Expiration or error value"
-
-        return HTTPStatus.OK, payload
-    except Exception as ex:
-        return HTTPStatus.INTERNAL_SERVER_ERROR, ex.args[0]
-
-
 def is_token(headers):
     ''' jwt token chech\n
     param -> headers = request.headers\n
@@ -89,24 +70,5 @@ def is_blank_str(string : str):
     param -> string = text\n
     return True(empty or None)/False(in value) """
     return not (string and string.strip())
-
-
-def check_body_request(req, args):
-    """ api request body 유효성 확인 args tuple or str """
-    if req is None:
-        return HTTPStatus.NO_CONTENT, "Request data is empty"
-
-    if type(args) is tuple:
-        for key in args:
-            if key == 'id':
-                if int(req[key]) <= 0:
-                    return HTTPStatus.NOT_FOUND, f'No value {key}'
-            else:
-                if is_blank_str(req[key]):
-                    return HTTPStatus.NOT_FOUND, f'No value {key}'
-    elif is_blank_str(req[args]):
-        return HTTPStatus.NOT_FOUND, f'No value {key}'
-    
-    return HTTPStatus.OK, 'Ok'
 
         
