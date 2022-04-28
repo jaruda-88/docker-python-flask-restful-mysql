@@ -37,7 +37,7 @@ class DBHandler():
 
     def connector(self):
         ''' mysql connector\n
-        error -> raise Exception(error message)
+        error -> raise Exception(error message)\n
         return db connector obj'''
         try: 
             conn = mysql.connector.connect(**self.config)
@@ -81,18 +81,19 @@ class DBHandler():
             return result  
 
 
-    def querys(self, datas:list, dict=True):
+    def querys(self, sql_list:list, dict=True):
         ''' mysql curd\n
         param -> datas = [
                 {
                     'sql': 'SELECT * FROM tb;',
-                    'value': None,
-                    'op': {'type': 'query', 'all': True}
+                    'type': 'query',
+                    'all': True
                 },
                 {
                     'sql': 'UPDATE tb SET value1=%s value2=%s',
                     'value': ('test', 'test'),
-                    'op': {'type': 'executer', 'last_id': False}
+                    'type': 'executer',
+                    'last_id': False
                 }
             ]\n
         error -> raise Exception(error message)\n
@@ -102,17 +103,16 @@ class DBHandler():
             conn = self.connector()            
             with conn.cursor(dictionary=dict) as cursor:
                 result = []
-                for data in datas:
-                    option = data['op']
+                for data in sql_list:
                     sql = data['sql']
-                    value = data['value']
-                    type = option['type']
+                    value = data.get('value', None)
+                    type = data['type']
                     if type == 'query':
-                        all = option['all']
+                        all = data['all']
                         cursor.execute(sql, value) if value else cursor.execute(sql)
                         result.append(cursor.fetchall() if all else cursor.fetchone())
                     elif type == 'executer':
-                        last_id = option['last_id']
+                        last_id = data['last_id']
                         cursor.execute(sql, value) if value else cursor.execute(sql)
                         if last_id:
                             result.append(cursor.lastrowid) 
@@ -120,7 +120,7 @@ class DBHandler():
                         if last_id == False:
                             result.append(cursor.rowcount)
                     else:
-                        raise Exception('datas:op:type error')
+                        raise Exception('dict error')
         except mysql.connector.Error as err:
             raise Exception(err.msg)
         except Exception as ex:
