@@ -25,7 +25,7 @@ DATABASE_CONFIG = {
     BuildType.LOCAL : {
         'db_name': 'project1',
         'port': 3306,
-        'host': '3.38.135.214',
+        'host': '3.38.205.101',
         'user': 'root',
         'pw': 'password'
     },
