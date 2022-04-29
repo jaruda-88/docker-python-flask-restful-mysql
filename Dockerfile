@@ -10,7 +10,7 @@ RUN pip install flasgger
 RUN pip install cryptography
 RUN pip install flask_cors
 RUN pip install pyjwt
-RUN pip install PyMySQL
+# RUN pip install PyMySQL
 RUN pip install mysql-connector-python
 
 WORKDIR /app

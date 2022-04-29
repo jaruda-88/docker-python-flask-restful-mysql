@@ -25,48 +25,21 @@ def create_swagger(app):
 def init_db():
     import os
     from pathlib import Path
-    import utils.database as database
+    import utils.databases as dbs
+    from utils.settings import DATABASE_CONFIG as con
+    import sys
 
-    db = database.DBHandler()
+    dbh = dbs.DBHandler(host=con['host'], port=con['port'], database=con['db_name'], user=con['user'], pw=con['pw'])
 
-    root = Path(os.path.dirname(os.path.abspath(__file__))).parent
-    path = os.path.join(root, 'utils/init_db.sql')
+    try:
+        root = Path(os.path.dirname(os.path.abspath(__file__))).parent
+        path = os.path.join(root, 'utils/init_db.sql')
 
-    data = open(path, 'r').readlines()
-    stmts = []
-    DELIMITER = ';'
-    stmt = ''
+        data = open(path, 'r').readlines()
 
-    for lineno, line in enumerate(data):
-        if not line.strip():
-            continue
-
-        if line.startswith('--'):
-            continue
-
-        if 'DELIMITER' in line:
-            DELIMITER = line.split()[1]
-            continue
-
-        if (DELIMITER not in line):
-            stmt += line.replace(DELIMITER, ';')
-            continue
-
-        if stmt:
-            stmt += line
-            stmts.append(stmt.strip())
-            stmt = ''
-        else:
-            stmts.append(line.strip())
-     
-    _flag, conn = db.connector()
-    if _flag:
-        with conn.cursor() as cursor:
-            for stmt in stmts:
-                cursor.execute(stmt)
-            conn.commit()
-            cursor.close()
-        conn.close()
+        dbh.insert_sql_file(file=data)
+    except Exception as ex:
+        print(ex.args[0],file=sys.stderr)
 
 
 def create_app():

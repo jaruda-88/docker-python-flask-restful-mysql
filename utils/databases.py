@@ -4,7 +4,14 @@ from mysql.connector import errorcode
 
 class DBHandler():
     def __init__(self, user:str, pw:str, host:str, database:str, port=3306, raise_on_warnings=True, use_pure=False):
-        ''' init create config '''
+        ''' init and create config\n
+        param -> user = database user name\n
+        param -> pw = database password\n
+        param -> host = database host\n
+        param -> database = database name\n
+        param -> port = database port\n
+        param -> raise_on_warnings = warnings option\n
+        param -> use_pure = use_pure option '''
         self.config = {
             'user': user,
             'password': pw,
@@ -14,6 +21,49 @@ class DBHandler():
             'raise_on_warnings': raise_on_warnings,
             'use_pure': use_pure
         }
+
+    
+    def insert_sql_file(self, file):
+        ''' read sql file\n
+        param -> file = open('file.sql', 'r').readlines()\n
+        error -> raise Exception(error message) '''
+        stmts = []
+        DELIMITER = ';'
+        stmt = ''
+
+        for lineno, line in enumerate(file):
+            if not line.strip():
+                continue
+
+            if line.startswith('--'):
+                continue
+
+            if 'DELIMITER' in line:
+                DELIMITER = line.split()[1]
+                continue
+
+            if (DELIMITER not in line):
+                stmt += line.replace(DELIMITER, ';')
+                continue
+
+            if stmt:
+                stmt += line
+                stmts.append(stmt.strip())
+                stmt = ''
+            else:
+                stmts.append(line.strip())
+        
+        try:
+            conn = self.connector()
+            with conn.cursor(dictionary=True) as cursor:
+                for stmt in stmts:
+                    cursor.execute(stmt)
+                conn.commit()
+        except Exception as ex:
+            raise Exception(ex.args[0])
+        else:
+            cursor.close()
+            conn.close()
         
     
     def change_config(self, user='', pw='', host='', database='', port=3306, raise_on_warnings=True, use_pure=False):
