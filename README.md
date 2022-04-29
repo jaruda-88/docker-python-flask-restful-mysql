@@ -24,11 +24,4 @@
       docker-compose up --force-recreate --build -d
       docker image prune -f
 ```
-
-## 기타
-```
-· docker logs에서 python print 
-    - import sys
-      print("log",file=sys.stderr)
-```
       
