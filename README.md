@@ -3,7 +3,7 @@
 ## 플라스크(python)
 ```
 · RestFul api
-· server : AWS EC2 width docker
+· server : AWS EC2 with docker
 · database : 
     - local(test-server) AWS EC2 width docker(mysql)
     - server AWS RDS mysql
