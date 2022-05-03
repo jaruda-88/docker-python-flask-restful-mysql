@@ -5,13 +5,14 @@ COPY requirements.txt .
 RUN apt-get update
 RUN apt-get install -y
 RUN pip3 install --upgrade pip
-RUN pip install -r requirements.txt
 RUN pip install flasgger
 RUN pip install cryptography
 RUN pip install flask_cors
 RUN pip install pyjwt
 # RUN pip install PyMySQL
-RUN pip install mysql-connector-python
+# RUN pip install mysql-connector-python
+RUN pip install jarudaDB==0.0.3
+RUN pip install -r requirements.txt
 
 WORKDIR /app
 

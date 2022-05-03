@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from flask import Blueprint, jsonify, request as f_request
 from flasgger import Swagger, swag_from
-import utils.databases as db
+import databases as db
 from utils.settings import DATABASE_CONFIG as con
 from src.users.user_methods import (
     user_get_in_id, 
@@ -51,7 +51,7 @@ def get_userinfos_in_id(pk):
                 WHERE activate=%s AND id=%s;'''
                 # db 조회
                 value = (1, int(pk))
-                result = dbh.query(sql=sql, value=value, all=False)
+                result = dbh.query(sql=sql, value=value, is_all=False)
         except Exception as ex:
             response['resultCode'] = HTTPStatus.FORBIDDEN
             raise Exception(ex.args[0])
@@ -90,7 +90,7 @@ def get_userinfos_in_userid(userid):
             WHERE activate=%s AND userid=%s'''
             value = (1, userid)
             # db 조회
-            result = dbh.query(sql=sql, value=value, all=False)
+            result = dbh.query(sql=sql, value=value, is_all=False)
         except Exception as ex:
             response['resultCode'] = HTTPStatus.FORBIDDEN
             raise Exception(ex.args[0])

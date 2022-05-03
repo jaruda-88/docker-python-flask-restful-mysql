@@ -1,4 +1,5 @@
-import mysql.connector
+pass
+"""import mysql.connector
 from mysql.connector import errorcode
 
 
@@ -207,4 +208,4 @@ class DBHandler():
         else:
             cursor.close()
             conn.close()
-            return result
+            return result"""

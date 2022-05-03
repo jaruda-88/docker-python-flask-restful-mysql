@@ -12,7 +12,7 @@
 ## 주요 라이브러리
 ```
 · swagger : flasgger
-· mysql : pymysql
+· mysql : mysql.connector
 · token : pyjwt
 ```
 

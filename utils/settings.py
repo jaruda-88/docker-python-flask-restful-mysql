@@ -9,7 +9,7 @@ class BuildType(Enum):
     NONE = 4
 
 
-BUILD_TYPE = BuildType.SERVER
+BUILD_TYPE = BuildType.DEVELOP
 
 
 DATABASE_CONFIG = {

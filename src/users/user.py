@@ -2,7 +2,7 @@ from http import HTTPStatus
 from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
-import utils.databases as db
+import databases as db
 from utils.settings import DATABASE_CONFIG as con
 from src.users.user_methods import (
     userinfo, 
@@ -56,7 +56,7 @@ class User(Resource):
                 pw_hash = get_password_sha256_hash(pw)
                 value = (userid, usernm, pw_hash, dt, dt, userid)
                 # db 조회
-                result = dbh.executer(sql=sql, value=value, last_id=True)
+                result = dbh.executer(sql=sql, value=value, is_lastrowid=True)
 
                 # insert 실패
                 if result == 0:
@@ -93,7 +93,7 @@ class User(Resource):
                 FROM tb_user
                 WHERE activate=%s AND userid=%s'''
                 # db 조회
-                result = dbh.query(sql=sql, value=(1, payload['userid']), all=False)
+                result = dbh.query(sql=sql, value=(1, payload['userid']), is_all=False)
 
                 if not result:
                     response['resultCode'] = HTTPStatus.INTERNAL_SERVER_ERROR
@@ -150,7 +150,7 @@ class User(Resource):
                 # 쿼리 작성, userid 중복 체크
                 select_sql = "SELECT userid FROM tb_user WHERE userid='{}';".format(userid)
                 # db 조회
-                select_result = dbh.query(sql=select_sql, all=False)
+                select_result = dbh.query(sql=select_sql, is_all=False)
 
                 if select_result:
                     response["resultCode"] = HTTPStatus.FORBIDDEN

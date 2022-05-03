@@ -25,11 +25,11 @@ def create_swagger(app):
 def init_db():
     import os
     from pathlib import Path
-    import utils.databases as dbs
+    import databases as db
     from utils.settings import DATABASE_CONFIG as con
     import sys
 
-    dbh = dbs.DBHandler(host=con['host'], port=con['port'], database=con['db_name'], user=con['user'], pw=con['pw'])
+    dbh = db.DBHandler(host=con['host'], port=con['port'], database=con['db_name'], user=con['user'], pw=con['pw'])
 
     try:
         root = Path(os.path.dirname(os.path.abspath(__file__))).parent
@@ -37,7 +37,7 @@ def init_db():
 
         data = open(path, 'r').readlines()
 
-        dbh.insert_sql_file(file=data)
+        dbh.executer_file_list(file=data)
     except Exception as ex:
         print(ex.args[0],file=sys.stderr)
 

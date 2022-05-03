@@ -1,4 +1,4 @@
-use project1;
+-- use project1;
 
 -- CREATE TABLE IF NOT EXISTS tb_todo(
 --     id INT AUTO_INCREMENT,

@@ -2,7 +2,7 @@ from http import HTTPStatus
 from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
-import utils.databases as db
+import databases as db
 from utils.settings import DATABASE_CONFIG as con
 from utils.function import(
     is_token,
@@ -53,7 +53,7 @@ class Comment(Resource):
                 dt = get_dt_now_to_str()
                 value = (userId, boardId, content, dt)
                 # db 조회
-                result = dbh.executer(sql=sql, value=value, last_id=True)
+                result = dbh.executer(sql=sql, value=value, is_lastrowid=True)
                 
                 if result == 0:
                     response['resultCode'] = HTTPStatus.FORBIDDEN

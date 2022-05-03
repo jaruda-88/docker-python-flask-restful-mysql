@@ -2,7 +2,7 @@ from http import HTTPStatus
 from flask import jsonify, request as f_request
 from flask_restful import Resource
 from flasgger import Swagger, swag_from
-import utils.databases as db
+import databases as db
 from utils.settings import DATABASE_CONFIG as con
 from src.boards.board_methods import (
     writing,
@@ -59,7 +59,7 @@ class Board(Resource):
                 dt = get_dt_now_to_str()
                 value = (writer, title, content, dt, dt)
                 # db 조회
-                result = dbh.executer(sql=sql, value=value, last_id=True)
+                result = dbh.executer(sql=sql, value=value, is_lastrowid=True)
 
                 if result == 0:
                     response['resultCode'] = HTTPStatus.FORBIDDEN

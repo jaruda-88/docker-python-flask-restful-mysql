@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from flask import Blueprint, jsonify, request as f_request
 from flasgger import Swagger, swag_from
-import utils.databases as db
+import databases as db
 from utils.settings import DATABASE_CONFIG as con
 from src.boards.board_methods import (
     delete_post,
@@ -89,7 +89,7 @@ def get_board_in_id(id):
                 FROM tb_board
                 WHERE id={id}
                 ORDER BY update_at DESC;'''
-                result = dbh.query(sql=sql, all=False)                
+                result = dbh.query(sql=sql, is_all=False)                
         except Exception as ex:
             raise Exception(ex.args[0])
         else:
@@ -140,13 +140,13 @@ def get_board_page(num, limit):
                     LIMIT %s, %s;''',
                     'value': ((pageNum * pageLimit), pageLimit),
                     'type': 'query',
-                    'all': True
+                    'is_all': True
                 },
                 {
                     'sql': '''SELECT COUNT(id) AS count
                     FROM tb_board;''',
                     'type': 'query',
-                    'all': False
+                    'is_all': False
                 }
             ]
             # db 조회
@@ -210,14 +210,14 @@ def get_board_writer():
                     LIMIT %s, %s;''',
                     'value': (writer, pageNum*pageLimit, pageLimit),
                     'type': 'query',
-                    'all': True
+                    'is_all': True
                 },
                 {
                     'sql': f'''SELECT COUNT(id) AS count
                     FROM tb_board
                     WHERE writer='{writer}';''',
                     'type': 'query',
-                    'all': False
+                    'is_all': False
                 }
             ]
             # db 조회
@@ -281,14 +281,14 @@ def get_board_title():
                     LIMIT %s, %s;''',
                     'value': (searchKeywork, pageNum*pageLimit, pageLimit),
                     'type': 'query',
-                    'all': True
+                    'is_all': True
                 },
                 {
                     'sql': f'''SELECT COUNT(id) AS count
                     FROM tb_board
                     WHERE title LIKE '{searchKeywork}';''',
                     'type': 'query',
-                    'all': False
+                    'is_all': False
                 }
             ]
             # db 조회
@@ -352,14 +352,14 @@ def get_board_content():
                     LIMIT %s, %s;''',
                     'value': (searchKeywork, pageNum*pageLimit, pageLimit),
                     'type': 'query',
-                    'all': True
+                    'is_all': True
                 },
                 {
                     'sql': f'''SELECT COUNT(id) AS count
                     FROM tb_board
                     WHERE content LIKE '{searchKeywork}';''',
                     'type': 'query',
-                    'all': False
+                    'is_all': False
                 }
             ]
             # db 조회

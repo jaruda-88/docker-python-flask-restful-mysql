@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request as f_request
 from flasgger import Swagger, swag_from
 from http import HTTPStatus
-import utils.databases as db
+import databases as db
 from utils.settings import DATABASE_CONFIG as con
 from utils.function import (
     is_token,
@@ -61,14 +61,14 @@ def get_board_comment_in_id():
                     LIMIT %s, %s;''',
                     'value': (boardPk, pageNum*pageLimit, pageLimit),
                     'type': 'query',
-                    'all': True
+                    'is_all': True
                 },
                 {
                     'sql': f'''SELECT COUNT(id) AS count
                     FROM tb_board_comment
                     WHERE board_id={board_id};''',
                     'type': 'query',
-                    'all': False
+                    'is_all': False
                 }
             ]
             result = dbh.querys(sql_list=sql_list)

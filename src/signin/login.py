@@ -2,7 +2,7 @@ from http import HTTPStatus
 from flask_restful import Resource
 from flask import jsonify, request as f_request
 from flasgger import Swagger, swag_from
-import utils.databases as dbs
+import databases as db
 from utils.settings import DATABASE_CONFIG as con
 from utils.function import (
     get_add_hour_to_dt_now, 
@@ -13,7 +13,7 @@ from utils.function import (
 )
 
 
-dbh = dbs.DBHandler(user=con['user'], host=con['host'], database=con['db_name'], pw=con['pw'], port=con['port'])
+dbh = db.DBHandler(user=con['user'], host=con['host'], database=con['db_name'], pw=con['pw'], port=con['port'])
 
 
 class Login(Resource):
@@ -23,7 +23,7 @@ class Login(Resource):
 
         try:
             rj = f_request.get_json()
-
+            
             userid = rj.get('userid', None)
             pw = rj.get('pw', None)
 
