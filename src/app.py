@@ -37,7 +37,7 @@ def init_db():
 
         data = open(path, 'r').readlines()
 
-        dbh.executer_file_list(file=data)
+        dbh.executer_file_list(file_list=data)
     except Exception as ex:
         print(ex.args[0],file=sys.stderr)
 
