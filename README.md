@@ -11,6 +11,6 @@
 </p>
 <h5 align="center">
 <img src="https://img.shields.io/badge/swagger%20flasgger%20restfulApi-success"/>
-<img src="https://img.shields.io/badge/EC2-blue"/>
+<img src="https://img.shields.io/badge/AWS%20EC2-blue"/>
 <img src="https://img.shields.io/badge/AWS%20RDS-lightgrey"/>
 </h5>
